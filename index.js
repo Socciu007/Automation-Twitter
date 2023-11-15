@@ -54,18 +54,18 @@ async function runProfiles(profiles, numberProfile) {
           });
 
           //await autoScroll(page);
-          // await featureLike(page, 0, 4);
+          await featureLike(page, 0, 4);
           //await featureComment(page, 2);
           // await featureRepost(page, 0, 4);
           //await featureRepostAddComment(page, 0, 4);
-          await featurePostStatus(page, {
-            status: 'div[aria-label="Everyone can reply"]',
-            // image: 'div[aria-label="Add photos or video"]',
-            // gif: 'div[aria-label="Add a GIF"]',
-            // emoji: 'div[aria-label="Add emoji"]',
-            poll: 'div[aria-label="Add poll"]',
-            // schedule: 'div[aria-label="Schedule post"]'
-          });
+          // await featurePostStatus(page, {
+          //   status: 'div[aria-label="Everyone can reply"]',
+          //   // image: 'div[aria-label="Add photos or video"]',
+          //   gif: 'div[aria-label="Add a GIF"]',
+          //   // emoji: 'div[aria-label="Add emoji"]',
+          //   //poll: 'div[aria-label="Add poll"]',
+          //   // schedule: 'div[aria-label="Schedule post"]'
+          // });
         } catch (error) {
           console.log("Thoi gian tai qua han.");
         }
@@ -315,7 +315,14 @@ async function featurePostStatus(page, body = {}) {
         await page.type("input[name=Choice2]", "Option2");
         await delay(1000);
         //Them option (neu muon)
-        //const addChoice = await page.$('select[]')
+        // const addChoice = await page.$('div[aria-label="Add a choice"]');
+        // await addChoice.click()
+        // await delay(1000);
+        // await page.type("input[name=Choice3]", "Option3");
+
+        // Setup time poll
+        // const addChoice = await page.$('select[data-testid="selectPollDays"]');
+        // await addChoice.click()
       } catch (error) {
         console.log("Khong the tao poll");
       }
@@ -324,23 +331,22 @@ async function featurePostStatus(page, body = {}) {
     const clickPost_0 = await page.$(
       'div[data-testid="tweetButtonInline"] > div[dir="ltr"]'
     );
-    // const clickPost_1 = await page.$('div[data-testid="tweetButton"]');
+    const clickPost_1 = await page.$(
+      'div[data-testid="tweetButton"] > div[dir="ltr"]'
+    );
     if (clickPost_0) {
       await delay(1000);
       await clickPost_0.click();
       await delay(3000);
-      // await page.waitForSelector(
-      //   'div[data-testid="tweetButtonInline"] > div[dir="ltr"]'
-      // );
-      // await page.click('div[data-testid="tweetButtonInline"] > div[dir="ltr"]');
       console.log("Dang status thanh cong");
     } else {
       await delay(1000);
-      await page.waitForSelector('div[data-testid="tweetButton"]');
-      await page.click('div[data-testid="tweetButton"]');
+      await clickPost_1.click();
       console.log("Dang status thanh cong");
     }
   } catch (error) {
     console.log("Tinh nang dang status khong thuc hien duoc.");
   }
 }
+
+// Tinh nang follow
