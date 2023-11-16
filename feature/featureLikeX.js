@@ -1,0 +1,88 @@
+const random = (min, max) => {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+};
+
+const delay = (timeout) =>
+  new Promise((resolve) => setTimeout(resolve, timeout));
+
+// Tinh nang like
+async function featureLikeX(
+  page,
+  durationInMinutes,
+  numberStart,
+  numberFinish
+) {
+  try {
+    await page.mouse.wheel({ deltaY: random(300, 1000) });
+    await delay(random(1000, 3000));
+
+    // Luot newsfeed trong durationInMinutes
+    const durationInMilliseconds = durationInMinutes * 60 * 1000;
+    const startTime = new Date().getTime();
+    let currentTime = new Date().getTime();
+
+    while (currentTime - startTime < durationInMilliseconds) {
+      // const likeAverageTime =
+      //   durationInMilliseconds / (numberFinish - numberStart);
+      let likeCurrentTime = (20 / 100) * durationInMilliseconds;
+      while (currentTime - startTime < likeCurrentTime) {
+        await page.evaluate(async () => {
+          const random = (min, max) => {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+          };
+          window.scrollBy(0, random(100, 300));
+        });
+        await delay(random(1000, 3000));
+        currentTime = new Date().getTime();
+      }
+
+      while (numberStart < numberFinish) {
+        await delay(random(1000, 3000));
+        const likeElements = await page.$$('div[data-testid="like"]');
+        await delay(random(1000, 3000));
+        console.log(likeElements.length);
+
+        if (likeElements.length === 0) {
+          throw new Error("Khong tim thay phan tu like");
+        }
+
+        const indexRandom = Math.floor(Math.random() * likeElements.length);
+        const positionLike = await likeElements[indexRandom].boundingBox();
+        await delay(random(1000, 3000));
+
+        //Scroll
+        await page.evaluate(async (positionLike) => {
+          const random = (min, max) => {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+          };
+
+          let totalHeight = 0;
+          window.scrollBy(0, random(100, 500));
+          totalHeight += 100;
+
+          if (totalHeight >= positionLike.y) {
+            return;
+          }
+        }, positionLike);
+        await delay(random(3000, 5000));
+        //Click like
+        await likeElements[indexRandom].click();
+        await delay(random(1000, 3000));
+
+        numberStart++;
+      }
+
+      await page.evaluate(async () => {
+        window.scrollBy(0, window.innerHeight);
+      });
+      await delay(random(1000, 3000));
+
+      // Cap nhat thoi gian hien tai
+      currentTime = new Date().getTime();
+    }
+  } catch (error) {
+    console.log("Tinh nang like khong thuc hien duoc.", error);
+  }
+}
+
+export default featureLikeX;

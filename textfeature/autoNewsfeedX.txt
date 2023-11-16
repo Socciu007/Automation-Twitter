@@ -1,0 +1,25 @@
+// Luot newsfeed
+async function autoScroll(page) {
+  await page.evaluate(async () => {
+    await new Promise((resolve, reject) => {
+      let totalHeight = 0;
+      const distance = 100;
+      const scrollInterval = setInterval(() => {
+        const scrollHeight = document.body.scrollHeight;
+        window.scrollBy(0, distance);
+        totalHeight += distance;
+
+        if (totalHeight <= scrollHeight) {
+          clearInterval(scrollInterval);
+          resolve();
+        }
+      }, 1000);
+    });
+  });
+}
+await page.goto("https://twitter.com/home", {
+        timeout: 30000,
+        waitUntil: "networkidle2",
+      });
+await delay(3000);
+await autoScroll(page);

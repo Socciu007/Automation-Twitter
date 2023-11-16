@@ -1,16 +1,19 @@
 import Hidemyacc from "./hidemyacc.js";
 import puppeteer from "puppeteer-core";
 import PublicGoogleSheetsParser from "public-google-sheets-parser";
-
-const hideMyAcc = new Hidemyacc();
+import featureAutoScroll from "./feature/featureAutoScroll.js";
+// import featureLikeX from "./feature/featureLikeX.js";
+// import featureCommentX from "./feature/featureCommentX.js";
+// import featureRepostX from "./feature/featureRepost.js";
 const delay = (timeout) =>
   new Promise((resolve) => setTimeout(resolve, timeout));
+
+const hideMyAcc = new Hidemyacc();
 
 (async () => {
   //get profiles
   const profiles = await hideMyAcc.profiles();
   runProfiles(profiles, 1);
-
   return;
 })();
 
@@ -19,153 +22,54 @@ async function runProfiles(profiles, numberProfile) {
   try {
     //Lay so luong tai khoan run
     const account = profiles.data.slice(0, numberProfile);
-    const results = await account.map((profile) => {
-      return hideMyAcc.start(profile.id, {
+    const results = await account.map(async (profile) => {
+      const response = await hideMyAcc.start(profile.id, {
         startUrl: "about:blank",
       });
+
+      if (!response) {
+        throw new Error(`Khong mo duoc trinh duyet port`);
+      }
+
+      const browser = await puppeteer.connect({
+        browserWSEndpoint: response.data.wsUrl,
+        defaultViewport: null,
+        slowMo: 60,
+      });
+
+      const pages = await browser.pages();
+      let page;
+      if (pages.length) {
+        page = pages[0];
+      } else {
+        page = await browser.newPage();
+      }
+
+      await page.goto("https://twitter.com/home", {
+        timeout: 30000,
+        waitUntil: "networkidle2",
+      });
+
+      await featureAutoScroll(page, 1);
+      await delay(3000);
+      // await featureLikeX(page, 2, 0, 3);
+      // await featureCommentX(page, 2, 0, 4);
+      // await featureRepostX(page, 2, 0, 4);
+      // await featurePostStatus(page, {
+      //   status: 'div[aria-label="Everyone can reply"]',
+      //   image: 'div[aria-label="Add photos or video"]',
+      //   //gif: 'div[aria-label="Add a GIF"]',
+      //   // emoji: 'div[aria-label="Add emoji"]',
+      //   //poll: 'div[aria-label="Add poll"]',
+      //   // schedule: 'div[aria-label="Schedule post"]'
+      // });
+      // return { browser, page };
     });
 
     //run cac tai khoan cung 1 luc
-    const responses = await Promise.all(results);
-
-    for (const res of responses) {
-      try {
-        if (res.code !== 1) {
-          throw new Error(`Khong mo duoc trinh duyet port ${res.data.port}`);
-        }
-        const browser = await puppeteer.connect({
-          browserWSEndpoint: res.data.wsUrl,
-          defaultViewport: null,
-          slowMo: 60,
-        });
-
-        const pages = await browser.pages();
-        let page;
-        if (pages.length) {
-          page = pages[0];
-        } else {
-          page = await browser.newPage();
-        }
-
-        try {
-          await page.goto("https://twitter.com/home", {
-            timeout: 30000,
-            waitUntil: "networkidle2",
-          });
-
-          //await autoScroll(page);
-          await featureLike(page, 0, 4);
-          //await featureComment(page, 2);
-          // await featureRepost(page, 0, 4);
-          //await featureRepostAddComment(page, 0, 4);
-          // await featurePostStatus(page, {
-          //   status: 'div[aria-label="Everyone can reply"]',
-          //   // image: 'div[aria-label="Add photos or video"]',
-          //   gif: 'div[aria-label="Add a GIF"]',
-          //   // emoji: 'div[aria-label="Add emoji"]',
-          //   //poll: 'div[aria-label="Add poll"]',
-          //   // schedule: 'div[aria-label="Schedule post"]'
-          // });
-        } catch (error) {
-          console.log("Thoi gian tai qua han.");
-        }
-      } catch (error) {
-        console.error("ERR", error);
-      }
-    }
+    const openProfiles = await Promise.all(results);
   } catch (error) {
-    console.error("ERR", error);
-  }
-}
-
-// Luot newsfeed
-async function autoScroll(page) {
-  await page.evaluate(async () => {
-    await new Promise((resolve, reject) => {
-      let totalHeight = 0;
-      const distance = 100;
-      const scrollInterval = setInterval(() => {
-        const scrollHeight = document.body.scrollHeight;
-        window.scrollBy(0, distance);
-        totalHeight += distance;
-
-        if (totalHeight <= scrollHeight) {
-          clearInterval(scrollInterval);
-          resolve();
-        }
-      }, 1000);
-    });
-  });
-}
-
-// Tinh nang like
-async function featureLike(page, numberStart, numberFinish) {
-  try {
-    const likeElements = await page.$$('div[data-testid="like"]');
-
-    if (likeElements === null) {
-      throw new Error("Khong tim thay phan tu like");
-    }
-    // const elementLikeRandom = likeElements
-    //   .sort(() => Math.random() - 0.5)
-    //   .slice(0, numberStart);
-
-    // for (const clickLike of elementLikeRandom) {
-    //   await clickLike.click();
-    //   await delay(1000);
-    // }
-
-    if (numberStart < numberFinish) {
-      const indexRandom = Math.ceil(2 * Math.random() + numberStart / 2);
-      await likeElements[indexRandom].click();
-      await delay(1000);
-      return await featureLike(page, numberStart + 1, numberFinish);
-    }
-  } catch (error) {
-    console.log("Tinh nang like khong thuc hien duoc.");
-  }
-}
-
-// Tinh nang comments
-async function featureComment(page, numberComment) {
-  try {
-    const commentElements = await page.$$('div[data-testid="reply"]');
-
-    if (commentElements === null) {
-      throw new Error("Khong tim thay phan tu reply");
-    }
-
-    const commentInputElement = commentElements.slice(0, numberComment);
-
-    for (const inputComment of commentInputElement) {
-      await inputComment.click();
-      await delay(1000);
-
-      const parser = new PublicGoogleSheetsParser(
-        "1iMJRnTjJKkO-WQv66LMmW6a1YzMivbvPn9l4lXl2DFI"
-      );
-      const listReply = await parser.parse(
-        "1iMJRnTjJKkO-WQv66LMmW6a1YzMivbvPn9l4lXl2DFI",
-        "X"
-      );
-      if (listReply === null) {
-        throw new Error("Khong lay duoc du lieu comment");
-      }
-      const replyRandom =
-        listReply[Math.floor(Math.random() * listReply.length)];
-      console.log(replyRandom);
-
-      if (!page.isClosed()) {
-        //Viet comment
-        await page.type('div[data-contents="true"]', replyRandom.Comments);
-        await delay(1000);
-        //Enter
-        await page.click('div[data-testid="tweetButton"]');
-        await delay(3000);
-      }
-    }
-  } catch (error) {
-    console.log("Tinh nang comment khong thuc hien duoc.");
+    console.error("Loi khong chay duoc profiles", error);
   }
 }
 
@@ -259,7 +163,7 @@ async function featurePostStatus(page, body = {}) {
           page.click(image),
         ]);
 
-        await fileAvatar.accept(["#url"]);
+        await fileAvatar.accept(["./avt1.jpeg"]);
         console.log("Chon image thanh cong");
         await delay(3000);
       } catch (error) {
@@ -348,5 +252,3 @@ async function featurePostStatus(page, body = {}) {
     console.log("Tinh nang dang status khong thuc hien duoc.");
   }
 }
-
-// Tinh nang follow
