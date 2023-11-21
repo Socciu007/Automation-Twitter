@@ -1,35 +1,40 @@
+const delay = (timeout) =>
+  new Promise((resolve) => setTimeout(resolve, timeout));
 const random = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
-const delay = (timeout) =>
-  new Promise((resolve) => setTimeout(resolve, timeout));
-
-// Tinh nang comments
-async function featureCommentX(
+async function featureRepostAddTittleX(
   page,
   durationInMinutes,
   numberStart,
   numberFinish
 ) {
   try {
-    await page.mouse.wheel({ deltaY: random(300, 1000) });
-    await delay(random(1000, 3000));
     // Luot newsfeed trong durationInMinutes
     const durationInMilliseconds = durationInMinutes * 60 * 1000;
 
     const startTime = new Date().getTime();
     let currentTime = new Date().getTime();
-    while (currentTime - startTime < durationInMilliseconds) {
+    while (currentTime - startTime <= durationInMilliseconds) {
+      //luot status 1/5 time
+      let breakTime = (20 / 100) * durationInMilliseconds;
+      while (currentTime - startTime < breakTime) {
+        await page.evaluate(async () => {
+          const random = (min, max) => {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+          };
+          window.scrollBy(0, random(100, 300));
+        });
+        await delay(random(1000, 3000));
+        currentTime = new Date().getTime();
+      }
       while (numberStart < numberFinish) {
-        const commentElements = await page.$$('div[data-testid="reply"]');
-        console.log(commentElements.length);
+        const repostElements = await page.$$('div[data-testid="retweet"]');
 
-        if (commentElements.length === 0) {
-          throw new Error("Khong tim thay phan tu reply");
+        if (repostElements.length === 0) {
+          throw new Error("Khong tim thay phan tu repost");
         }
-
-        const indexRandom = Math.floor(Math.random() * commentElements.length);
 
         const data = [
           { id: 1, comment: "Very good" },
@@ -43,40 +48,20 @@ async function featureCommentX(
         ];
         const replyRandom = data[Math.floor(Math.random() * data.length)];
 
-        const positionComment = await commentElements[
-          indexRandom
-        ].boundingBox();
+        const indexRandom = Math.floor(Math.random() * repostElements.length);
 
-        await page.evaluate(async (positionComment) => {
-          const random = (min, max) => {
-            return Math.floor(Math.random() * (max - min + 1)) + min;
-          };
-          await new Promise((resolve, reject) => {
-            let totalHeight = 0;
-            const scrollInterval = setInterval(() => {
-              window.scrollBy(0, random(100, 500));
-              totalHeight += random(100, 500);
-
-              if (totalHeight >= positionComment.y) {
-                clearInterval(scrollInterval);
-                resolve();
-              }
-            }, 1000);
-          });
-        }, positionComment);
-
-        await commentElements[indexRandom].click();
+        await repostElements[indexRandom].click();
         await delay(random(1000, 3000));
 
-        if (!page.isClosed()) {
-          //Viet comment
-          await page.type('div[data-contents="true"]', replyRandom.comment);
-          await delay(random(1000, 3000));
-          //Enter
-          await page.click('div[data-testid="tweetButton"]');
-          await delay(random(1000, 3000));
-          console.log("da comment");
-        }
+        await page.click('a[href="/compose/tweet"]');
+        await delay(random(1000, 3000));
+
+        await page.type('div[data-contents="true"]', replyRandom.comment);
+        await delay(random(1000, 3000));
+
+        await page.click('div[data-testid="tweetButton"]');
+        await delay(random(1000, 3000));
+
         await page.evaluate(async () => {
           const random = (min, max) => {
             return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -120,8 +105,8 @@ async function featureCommentX(
       currentTime = new Date().getTime();
     }
   } catch (error) {
-    console.log("Tinh nang comment khong thuc hien duoc.");
+    console.log("Tinh nang repost khong thuc hien duoc.");
   }
 }
 
-export default featureCommentX;
+export default featureRepostAddTittleX;
