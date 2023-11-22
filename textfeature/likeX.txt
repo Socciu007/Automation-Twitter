@@ -5,7 +5,6 @@ const random = (min, max) => {
 const delay = (timeout) =>
   new Promise((resolve) => setTimeout(resolve, timeout));
 
-// Tinh nang like
 async function featureLikeX(
   page,
   durationInMinutes,
@@ -16,79 +15,80 @@ async function featureLikeX(
     await page.mouse.wheel({ deltaY: random(300, 1000) });
     await delay(random(1000, 3000));
 
-    // Luot newsfeed trong durationInMinutes
     const durationInMilliseconds = durationInMinutes * 60 * 1000;
     const startTime = new Date().getTime();
     let currentTime = new Date().getTime();
 
     while (currentTime - startTime < durationInMilliseconds) {
-      // const likeAverageTime =
-      //   durationInMilliseconds / (numberFinish - numberStart);
-      let likeCurrentTime = (20 / 100) * durationInMilliseconds;
-      while (currentTime - startTime < likeCurrentTime) {
-        await page.evaluate(async () => {
-          const random = (min, max) => {
-            return Math.floor(Math.random() * (max - min + 1)) + min;
-          };
-          window.scrollBy(0, random(100, 300));
-        });
+      let likeStartTime = (5 / 100) * durationInMilliseconds;
+      while (currentTime - startTime < likeStartTime) {
+        await page.mouse.wheel({ deltaY: random(300, 1000) });
         await delay(random(1000, 3000));
         currentTime = new Date().getTime();
       }
 
+      const likeAverageTime =
+        durationInMilliseconds / (numberFinish - numberStart);
+
       while (numberStart < numberFinish) {
-        await delay(random(1000, 3000));
         const likeElements = await page.$$('div[data-testid="like"]');
         await delay(random(1000, 3000));
-        console.log(likeElements.length);
+        console.log("likeElements", likeElements.length);
 
         if (likeElements.length === 0) {
           throw new Error("Khong tim thay phan tu like");
         }
 
-        const indexRandom = Math.floor(Math.random() * likeElements.length);
+        let indexRandom = Math.floor(Math.random() * likeElements.length);
         const positionLike = await likeElements[indexRandom].boundingBox();
         await delay(random(1000, 3000));
+        console.log("positionLike", indexRandom, positionLike.y);
 
-        //Scroll
-        await page.evaluate(async (positionLike) => {
-          const random = (min, max) => {
-            return Math.floor(Math.random() * (max - min + 1)) + min;
-          };
+        const scrollToLike = async (totalHeight, likeAverageTime) => {
+          if (totalHeight < positionLike.y) {
+            await page.mouse.wheel({ deltaY: random(300, 1000) });
+            await delay(random(1000, 3000));
+            console.log(totalHeight);
+            return await scrollToLike(totalHeight + random(300, 1000));
+          }
 
-          let totalHeight = 0;
-          window.scrollBy(0, random(100, 500));
-          totalHeight += 100;
+          if (likeElements[indexRandom]) {
+            await likeElements[indexRandom].click();
+            const likeCurrentTime = new Date().getTime();
+            let scrollTime = new Date().getTime();
 
-          if (totalHeight >= positionLike.y) {
+            while (scrollTime - likeCurrentTime < likeAverageTime) {
+              await page.mouse.wheel({ deltaY: random(300, 1000) });
+              await delay(random(1000, 3000));
+              scrollTime = new Date().getTime();
+            }
             return;
           }
-        }, positionLike);
-        await delay(random(3000, 5000));
-        //Click like
-        await likeElements[indexRandom].click();
+
+          const likeElement = await page.$('div[data-testid="like"]');
+          await likeElement.click();
+          await delay(random(1000, 3000));
+
+          return;
+        };
+        await scrollToLike(random(0, 100), likeAverageTime);
         await delay(random(1000, 3000));
 
         numberStart++;
       }
 
-      await page.evaluate(async () => {
-        window.scrollBy(0, window.innerHeight);
-      });
+      await page.mouse.wheel({ deltaY: random(300, 1000) });
       await delay(random(1000, 3000));
 
-      // Cap nhat thoi gian hien tai
       currentTime = new Date().getTime();
     }
   } catch (error) {
     console.log("Tinh nang like khong thuc hien duoc.", error);
   }
 }
-
-
 await page.goto("https://twitter.com/home", {
-  timeout: 30000,
-  waitUntil: "networkidle2",
-});
-await delay(random(1000, 3000));
-await featureLikeX(page, 2, 0, 2);
+        timeout: 30000,
+        waitUntil: "networkidle2",
+      });
+await delay(3000);
+await featureLikeX(page, 4, 0, 3);

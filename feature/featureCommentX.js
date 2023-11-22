@@ -5,7 +5,6 @@ const random = (min, max) => {
 const delay = (timeout) =>
   new Promise((resolve) => setTimeout(resolve, timeout));
 
-// Tinh nang comments
 async function featureCommentX(
   page,
   durationInMinutes,
@@ -15,16 +14,23 @@ async function featureCommentX(
   try {
     await page.mouse.wheel({ deltaY: random(300, 1000) });
     await delay(random(1000, 3000));
-    // Luot newsfeed trong durationInMinutes
-    const durationInMilliseconds = durationInMinutes * 60 * 1000;
 
+    const durationInMilliseconds = durationInMinutes * 60 * 1000;
+    const commentAverageTime =
+      durationInMilliseconds / (numberFinish - numberStart);
     const startTime = new Date().getTime();
     let currentTime = new Date().getTime();
+
     while (currentTime - startTime < durationInMilliseconds) {
+      let breakTime = (5 / 100) * durationInMilliseconds;
+      while (currentTime - startTime < breakTime) {
+        await page.mouse.wheel({ deltaY: random(300, 1000) });
+        await delay(random(1000, 3000));
+        currentTime = new Date().getTime();
+      }
       while (numberStart < numberFinish) {
         const commentElements = await page.$$('div[data-testid="reply"]');
-        console.log(commentElements.length);
-
+        await delay(random(1000, 3000));
         if (commentElements.length === 0) {
           throw new Error("Khong tim thay phan tu reply");
         }
@@ -46,77 +52,41 @@ async function featureCommentX(
         const positionComment = await commentElements[
           indexRandom
         ].boundingBox();
+        let totalHeight = 0;
 
-        await page.evaluate(async (positionComment) => {
-          const random = (min, max) => {
-            return Math.floor(Math.random() * (max - min + 1)) + min;
-          };
-          await new Promise((resolve, reject) => {
-            let totalHeight = 0;
-            const scrollInterval = setInterval(() => {
-              window.scrollBy(0, random(100, 500));
-              totalHeight += random(100, 500);
+        while (totalHeight < positionComment.y) {
+          await page.mouse.wheel({ deltaY: random(300, 1000) });
+          await delay(random(1000, 3000));
+          totalHeight += random(300, 1000);
+        }
 
-              if (totalHeight >= positionComment.y) {
-                clearInterval(scrollInterval);
-                resolve();
-              }
-            }, 1000);
-          });
-        }, positionComment);
+        await page.mouse.wheel({ deltaY: random(300, 1000) });
+        await delay(random(1000, 3000));
 
         await commentElements[indexRandom].click();
         await delay(random(1000, 3000));
 
-        if (!page.isClosed()) {
-          //Viet comment
-          await page.type('div[data-contents="true"]', replyRandom.comment);
+        await page.type('div[data-contents="true"]', replyRandom.comment);
+        await delay(random(1000, 3000));
+
+        await page.click('div[data-testid="tweetButton"]');
+        await delay(random(1000, 3000));
+
+        const commentCurrentTime = new Date().getTime();
+        let scrollTime = new Date().getTime();
+
+        while (scrollTime - commentCurrentTime < (2 / 3) * commentAverageTime) {
+          await page.mouse.wheel({ deltaY: random(300, 1000) });
           await delay(random(1000, 3000));
-          //Enter
-          await page.click('div[data-testid="tweetButton"]');
-          await delay(random(1000, 3000));
-          console.log("da comment");
+          scrollTime = new Date().getTime();
         }
-        await page.evaluate(async () => {
-          const random = (min, max) => {
-            return Math.floor(Math.random() * (max - min + 1)) + min;
-          };
-          window.scrollBy(0, random(200, 500));
-        });
-        await delay(random(1000, 3000));
-
-        await page.evaluate(async () => {
-          const random = (min, max) => {
-            return Math.floor(Math.random() * (max - min + 1)) + min;
-          };
-          window.scrollBy(0, random(200, 500));
-        });
-        await delay(random(1000, 3000));
-
-        await page.evaluate(async () => {
-          const random = (min, max) => {
-            return Math.floor(Math.random() * (max - min + 1)) + min;
-          };
-          window.scrollBy(0, random(200, 500));
-        });
-        await delay(random(1000, 3000));
-
-        await page.evaluate(async () => {
-          const random = (min, max) => {
-            return Math.floor(Math.random() * (max - min + 1)) + min;
-          };
-          window.scrollBy(0, random(200, 500));
-        });
-        await delay(random(1000, 3000));
 
         numberStart++;
       }
-      await page.evaluate(async () => {
-        window.scrollBy(0, window.innerHeight);
-      });
+
+      await page.mouse.wheel({ deltaY: random(300, 1000) });
       await delay(random(1000, 3000));
 
-      // Cap nhat thoi gian hien tai
       currentTime = new Date().getTime();
     }
   } catch (error) {

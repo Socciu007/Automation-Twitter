@@ -48,7 +48,7 @@ async function featurePostStatusX(page, scrollTime, body = {}) {
         const clickStatus = await page.$(status);
         await clickStatus.click();
         await delay(random(1000, 3000));
-        const selectStatus = await page.$$('div[role="menuitem"]'); //4 option: [ everyone, accounts you follow, verified accounts, only accounts you mention]
+        const selectStatus = await page.$$('div[role="menuitem"]');
         await selectStatus[0].click();
         await delay(random(1000, 3000));
         console.log("Chon status thanh cong");
@@ -125,15 +125,6 @@ async function featurePostStatusX(page, scrollTime, body = {}) {
         await delay(random(1000, 3000));
         await page.type("input[name=Choice2]", "Option2");
         await delay(random(1000, 3000));
-        //Them option (neu muon)
-        // const addChoice = await page.$('div[aria-label="Add a choice"]');
-        // await addChoice.click()
-        // await delay(random(1000, 3000));
-        // await page.type("input[name=Choice3]", "Option3");
-
-        // Setup time poll
-        // const addChoice = await page.$('select[data-testid="selectPollDays"]');
-        // await addChoice.click()
       } catch (error) {
         console.log("Khong the tao poll");
       }
@@ -155,4 +146,12 @@ async function featurePostStatusX(page, scrollTime, body = {}) {
   }
 }
 
-export default featurePostStatusX;
+await page.goto("https://twitter.com/home", {
+        timeout: 30000,
+        waitUntil: "networkidle2",
+      });
+      await delay(random(1000, 3000));
+      await featurePostStatusX(page,0.3, {
+        status: 'div[aria-label="Everyone can reply"]',
+        poll: 'div[aria-label="Add poll"]',
+       });

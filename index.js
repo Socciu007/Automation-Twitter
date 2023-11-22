@@ -3,7 +3,7 @@ import puppeteer from "puppeteer-core";
 // import featureAutoScroll from "./feature/featureAutoScrollX.js";
 import featureLikeX from "./feature/featureLikeX.js";
 // import featureCommentX from "./feature/featureCommentX.js";
-// import featureRepostX from "./feature/featureRepost.js";
+// import featureShareX from "./feature/featureShareX.js";
 const delay = (timeout) =>
   new Promise((resolve) => setTimeout(resolve, timeout));
 
@@ -51,9 +51,9 @@ async function runProfiles(profiles, numberProfile) {
 
       // await featureAutoScroll(page, 1);
       await delay(3000);
-      await featureLikeX(page, 2, 0, 3);
-      // await featureCommentX(page, 2, 0, 4);
-      // await featureRepostX(page, 2, 0, 4);
+      await featureLikeX(page, 4, 0, 4);
+      // await featureCommentX(page, 4, 0, 3);
+      // await featureShareX(page, 4, 0, 4);
       // await featurePostStatus(page, {
       //   status: 'div[aria-label="Everyone can reply"]',
       //   image: 'div[aria-label="Add photos or video"]',

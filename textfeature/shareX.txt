@@ -11,6 +11,7 @@ async function featureRepostAddTittleX(
   numberFinish
 ) {
   try {
+
     const durationInMilliseconds = durationInMinutes * 60 * 1000;
     const shareAverageTime =
       durationInMilliseconds / (numberFinish - numberStart);
@@ -62,7 +63,7 @@ async function featureRepostAddTittleX(
         await page.mouse.wheel({ deltaY: random(300, 1000) });
         await delay(random(1000, 3000));
 
-        while (scrollTime - shareCurrentTime < (2 / 3) * shareAverageTime) {
+        while (scrollTime - shareCurrentTime < (2/3)*shareAverageTime) {
           await page.mouse.wheel({ deltaY: random(300, 1000) });
           await delay(random(1000, 3000));
           scrollTime = new Date().getTime();
@@ -80,5 +81,9 @@ async function featureRepostAddTittleX(
     console.log("Tinh nang repost khong thuc hien duoc.");
   }
 }
-
-export default featureRepostAddTittleX;
+await page.goto("https://twitter.com/home", {
+        timeout: 30000,
+        waitUntil: "networkidle2",
+      });
+await delay(random(1000,3000));
+await featureRepostAddTittleX(page, 4, 0, 3);
