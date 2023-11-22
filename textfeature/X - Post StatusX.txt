@@ -5,6 +5,7 @@ const random = (min, max) => {
 };
 
 async function featurePostStatusX(page, scrollTime, body = {}) {
+  let logErrors = [];
   try {
     const scrollTimeInMilliseconds = scrollTime * 60 * 1000;
 
@@ -35,25 +36,46 @@ async function featurePostStatusX(page, scrollTime, body = {}) {
       );
       await delay(random(1000, 3000));
     } else {
-      await page.type(
-        'div[data-testid="tweetTextarea_0"]',
-        data[Math.floor(Math.random() * data.length)]
-      );
-      await delay(random(1000, 3000));
+      try {
+        await page.type(
+          'div[data-testid="tweetTextarea_0"]',
+          data[Math.floor(Math.random() * data.length)]
+        );
+        await delay(random(1000, 3000));
+      } catch (error) {
+        logErrors.push({
+          error: "title error",
+          detail: error.message,
+        });
+      }
     }
 
     const { status, image, gif, emoji, poll, schedule } = body;
     if (status) {
       try {
         const clickStatus = await page.$(status);
+        if (!clickStatus) {
+          logErrors.push({
+            error: "title error",
+            detail: "Can't button status",
+          });
+        }
         await clickStatus.click();
         await delay(random(1000, 3000));
-        const selectStatus = await page.$$('div[role="menuitem"]');
+        const selectStatus = await page.$$('div[role="menuitem"]'); //4 option: [ everyone, accounts you follow, verified accounts, only accounts you mention]
+        if (!selectStatus) {
+          logErrors.push({
+            error: "title error",
+            detail: "Can't select status for postX",
+          });
+        }
         await selectStatus[0].click();
         await delay(random(1000, 3000));
-        console.log("Chon status thanh cong");
       } catch (error) {
-        console.log("Khong the chon status");
+        logErrors.push({
+          error: "title error",
+          detail: error.message,
+        });
       }
     }
 
@@ -65,20 +87,34 @@ async function featurePostStatusX(page, scrollTime, body = {}) {
         ]);
 
         await fileAvatar.accept(["./avt1.jpeg"]);
-        console.log("Chon image thanh cong");
         await delay(random(1000, 3000));
       } catch (error) {
-        console.log("Khong the tai image");
+        logErrors.push({
+          error: "title error",
+          detail: error.message,
+        });
       }
     }
 
     if (gif) {
       try {
         const buttonGif = await page.$(gif);
+        if (!buttonGif) {
+          logErrors.push({
+            error: "title error",
+            detail: "Can't select gif",
+          });
+        }
         await buttonGif.click();
         await delay(random(1000, 3000));
 
         const selectGif = await page.$$('div > img[draggable="false"]');
+        if (!selectGif) {
+          logErrors.push({
+            error: "title error",
+            detail: "Can't select topic gif",
+          });
+        }
         const selectedGif = selectGif.slice(0, 8);
         const indexRandom_0 = Math.floor(Math.random() * 8);
         await delay(random(1000, 3000));
@@ -92,9 +128,11 @@ async function featurePostStatusX(page, scrollTime, body = {}) {
         await delay(random(1000, 3000));
         await clickGif[indexRandom_1].click();
         await delay(random(1000, 3000));
-        console.log("Chon gif thanh cong");
       } catch (error) {
-        console.log("Khong the chon gif");
+        logErrors.push({
+          error: "title error",
+          detail: error.message,
+        });
       }
     }
 
@@ -118,15 +156,40 @@ async function featurePostStatusX(page, scrollTime, body = {}) {
     if (poll) {
       try {
         const clickPoll = await page.$(poll);
+        if (!clickPoll) {
+          logErrors.push({
+            error: "title error",
+            detail: "Can't find button poll of post",
+          });
+        }
         await clickPoll.click();
         await delay(random(1000, 3000));
 
-        await page.type("input[name=Choice1]", "Option1");
-        await delay(random(1000, 3000));
-        await page.type("input[name=Choice2]", "Option2");
-        await delay(random(1000, 3000));
+        try {
+          await page.type("input[name=Choice1]", "Option1");
+          await delay(random(1000, 3000));
+          await page.type("input[name=Choice2]", "Option2");
+          await delay(random(1000, 3000));
+        } catch (error) {
+          logErrors.push({
+            error: "title error",
+            detail: error.message,
+          });
+        }
+        //Them option (neu muon)
+        // const addChoice = await page.$('div[aria-label="Add a choice"]');
+        // await addChoice.click()
+        // await delay(random(1000, 3000));
+        // await page.type("input[name=Choice3]", "Option3");
+
+        // Setup time poll
+        // const addChoice = await page.$('select[data-testid="selectPollDays"]');
+        // await addChoice.click()
       } catch (error) {
-        console.log("Khong the tao poll");
+        logErrors.push({
+          error: "title error",
+          detail: error.message,
+        });
       }
     }
     await delay(random(1000, 3000));
@@ -134,15 +197,24 @@ async function featurePostStatusX(page, scrollTime, body = {}) {
     const clickPost_0 = await page.$('div[data-testid="tweetButtonInline"]');
     const clickPost_1 = await page.$('div[data-testid="tweetButton"]');
     if (clickPost_0 || clickPost_1) {
-      await delay(random(1000, 3000));
-      await clickPost_1.click();
-      await delay(random(1000, 3000));
-      await clickPost_0.click();
-      await delay(random(1000, 3000));
-      console.log("Dang status thanh cong");
+      try {
+        await delay(random(1000, 3000));
+        await clickPost_1.click();
+        await delay(random(1000, 3000));
+        await clickPost_0.click();
+        await delay(random(1000, 3000));
+      } catch (error) {
+        logErrors.push({
+          error: "title error",
+          detail: error.message,
+        });
+      }
     }
   } catch (error) {
-    console.log("Tinh nang dang status khong thuc hien duoc.", error);
+    logErrors.push({
+      error: "title error",
+      detail: error.message,
+    });
   }
 }
 
@@ -150,8 +222,8 @@ await page.goto("https://twitter.com/home", {
         timeout: 30000,
         waitUntil: "networkidle2",
       });
-      await delay(random(1000, 3000));
-      await featurePostStatusX(page,0.3, {
-        status: 'div[aria-label="Everyone can reply"]',
-        poll: 'div[aria-label="Add poll"]',
-       });
+await delay(random(1000, 3000));
+await featurePostStatusX(page,0.3, {
+  status: 'div[aria-label="Everyone can reply"]',
+  poll: 'div[aria-label="Add poll"]',
+});

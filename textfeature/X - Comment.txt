@@ -1,10 +1,11 @@
-const delay = (timeout) =>
-  new Promise((resolve) => setTimeout(resolve, timeout));
 const random = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
-async function featureShareX(
+const delay = (timeout) =>
+  new Promise((resolve) => setTimeout(resolve, timeout));
+
+async function featureCommentX(
   page,
   durationInMinutes,
   numberStart,
@@ -12,13 +13,16 @@ async function featureShareX(
 ) {
   let logErrors = [];
   try {
-    const durationInMilliseconds = durationInMinutes * 60 * 1000;
-    const shareAverageTime =
-      durationInMilliseconds / (numberFinish - numberStart);
+    await page.mouse.wheel({ deltaY: random(300, 1000) });
+    await delay(random(1000, 3000));
 
+    const durationInMilliseconds = durationInMinutes * 60 * 1000;
+    const commentAverageTime =
+      durationInMilliseconds / (numberFinish - numberStart);
     const startTime = new Date().getTime();
     let currentTime = new Date().getTime();
-    while (currentTime - startTime <= durationInMilliseconds) {
+
+    while (currentTime - startTime < durationInMilliseconds) {
       let breakTime = (5 / 100) * durationInMilliseconds;
       while (currentTime - startTime < breakTime) {
         await page.mouse.wheel({ deltaY: random(300, 1000) });
@@ -26,14 +30,16 @@ async function featureShareX(
         currentTime = new Date().getTime();
       }
       while (numberStart < numberFinish) {
-        const repostElements = await page.$$('div[data-testid="retweet"]');
-
-        if (repostElements.length === 0) {
+        const commentElements = await page.$$('div[data-testid="reply"]');
+        await delay(random(1000, 3000));
+        if (commentElements.length === 0) {
           logErrors.push({
             error: "title error",
-            detail: "Can't find button share",
+            detail: "Can't find button",
           });
         }
+
+        const indexRandom = Math.floor(Math.random() * commentElements.length);
 
         const data = [
           { id: 1, comment: "Very good" },
@@ -47,13 +53,28 @@ async function featureShareX(
         ];
         const replyRandom = data[Math.floor(Math.random() * data.length)];
 
-        const indexRandom = Math.floor(Math.random() * repostElements.length);
+        const positionComment = await commentElements[
+          indexRandom
+        ].boundingBox();
+        if (!positionComment) {
+          logErrors.push({
+      error: "title error",
+      detail: "Can't show position Comment",
+    });
+          
+        }
+        let totalHeight = 0;
 
-        try {
-          await repostElements[indexRandom].click();
+        while (totalHeight < positionComment.y) {
+          await page.mouse.wheel({ deltaY: random(300, 1000) });
           await delay(random(1000, 3000));
+          totalHeight += random(300, 1000);
+        }
 
-          await page.click('a[href="/compose/tweet"]');
+        await page.mouse.wheel({ deltaY: random(300, 1000) });
+        await delay(random(1000, 3000));
+        try {
+          await commentElements[indexRandom].click();
           await delay(random(1000, 3000));
 
           await page.type('div[data-contents="true"]', replyRandom.comment);
@@ -68,26 +89,18 @@ async function featureShareX(
           });
         }
 
-        const shareCurrentTime = new Date().getTime();
+        const commentCurrentTime = new Date().getTime();
         let scrollTime = new Date().getTime();
-        try {
+
+        while (scrollTime - commentCurrentTime < (2 / 3) * commentAverageTime) {
           await page.mouse.wheel({ deltaY: random(300, 1000) });
           await delay(random(1000, 3000));
-
-          while (scrollTime - shareCurrentTime < (2 / 3) * shareAverageTime) {
-            await page.mouse.wheel({ deltaY: random(300, 1000) });
-            await delay(random(1000, 3000));
-            scrollTime = new Date().getTime();
-          }
-        } catch (error) {
-          logErrors.push({
-            error: "title error",
-            detail: error.message,
-          });
+          scrollTime = new Date().getTime();
         }
 
         numberStart++;
       }
+
       await page.mouse.wheel({ deltaY: random(300, 1000) });
       await delay(random(1000, 3000));
 
@@ -101,4 +114,9 @@ async function featureShareX(
   }
 }
 
-export default featureShareX;
+await page.goto("https://twitter.com/home", {
+        timeout: 30000,
+        waitUntil: "networkidle2",
+      });
+await delay(random(1000, 3000));
+await featureCommentX(page, 4, 0, 3);

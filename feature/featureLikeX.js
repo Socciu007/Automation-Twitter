@@ -11,6 +11,7 @@ async function featureLikeX(
   numberStart,
   numberFinish
 ) {
+  let logErrors = [];
   try {
     await page.mouse.wheel({ deltaY: random(300, 1000) });
     await delay(random(1000, 3000));
@@ -33,22 +34,28 @@ async function featureLikeX(
       while (numberStart < numberFinish) {
         const likeElements = await page.$$('div[data-testid="like"]');
         await delay(random(1000, 3000));
-        console.log("likeElements", likeElements.length);
 
         if (likeElements.length === 0) {
-          throw new Error("Khong tim thay phan tu like");
+          logErrors.push({
+            status: "ERR",
+            message: error.message,
+          });
         }
 
         let indexRandom = Math.floor(Math.random() * likeElements.length);
         const positionLike = await likeElements[indexRandom].boundingBox();
         await delay(random(1000, 3000));
-        console.log("positionLike", indexRandom, positionLike.y);
+        if (!positionLike) {
+          logErrors.push({
+            status: "ERR",
+            message: error.message,
+          });
+        }
 
         const scrollToLike = async (totalHeight, likeAverageTime) => {
           if (totalHeight < positionLike.y) {
             await page.mouse.wheel({ deltaY: random(300, 1000) });
             await delay(random(1000, 3000));
-            console.log(totalHeight);
             return await scrollToLike(totalHeight + random(300, 1000));
           }
 
@@ -65,6 +72,11 @@ async function featureLikeX(
               console.log(scrollTime - likeCurrentTime, likeAverageTime);
             }
             return;
+          } else {
+            logErrors.push({
+              status: "ERR",
+              message: "Khong tim thay click like",
+            });
           }
 
           await delay(random(1000, 3000));
@@ -82,7 +94,10 @@ async function featureLikeX(
       currentTime = new Date().getTime();
     }
   } catch (error) {
-    console.log("Tinh nang like khong thuc hien duoc.", error);
+    logErrors.push({
+      status: "ERR",
+      message: "Tinh nang like khong the thuc hien",
+    });
   }
 }
 

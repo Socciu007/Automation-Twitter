@@ -1,7 +1,6 @@
 const delay = (timeout) =>
   new Promise((resolve) => setTimeout(resolve, timeout));
 
-// Luot newsfeed
 async function featureAutoScrollX(page, durationInMinutes) {
   try {
     await page.evaluate(async (durationInMinutes) => {
@@ -10,7 +9,6 @@ async function featureAutoScrollX(page, durationInMinutes) {
           return Math.floor(Math.random() * (max - min + 1)) + min;
         };
 
-        //Luot newsfeed trong mili giay
         const durationInMilliseconds = durationInMinutes * 60 * 1000;
         const startTime = new Date().getTime();
         let currentTime = new Date().getTime();

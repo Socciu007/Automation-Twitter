@@ -1,27 +1,24 @@
+const delay = (timeout) =>
+  new Promise((resolve) => setTimeout(resolve, timeout));
 const random = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
-const delay = (timeout) =>
-  new Promise((resolve) => setTimeout(resolve, timeout));
-
-async function featureCommentX(
+async function featureShareX(
   page,
   durationInMinutes,
   numberStart,
   numberFinish
 ) {
+  let logErrors = [];
   try {
-    await page.mouse.wheel({ deltaY: random(300, 1000) });
-    await delay(random(1000, 3000));
-
     const durationInMilliseconds = durationInMinutes * 60 * 1000;
-    const commentAverageTime =
+    const shareAverageTime =
       durationInMilliseconds / (numberFinish - numberStart);
+
     const startTime = new Date().getTime();
     let currentTime = new Date().getTime();
-
-    while (currentTime - startTime < durationInMilliseconds) {
+    while (currentTime - startTime <= durationInMilliseconds) {
       let breakTime = (5 / 100) * durationInMilliseconds;
       while (currentTime - startTime < breakTime) {
         await page.mouse.wheel({ deltaY: random(300, 1000) });
@@ -29,13 +26,14 @@ async function featureCommentX(
         currentTime = new Date().getTime();
       }
       while (numberStart < numberFinish) {
-        const commentElements = await page.$$('div[data-testid="reply"]');
-        await delay(random(1000, 3000));
-        if (commentElements.length === 0) {
-          throw new Error("Khong tim thay phan tu reply");
-        }
+        const repostElements = await page.$$('div[data-testid="retweet"]');
 
-        const indexRandom = Math.floor(Math.random() * commentElements.length);
+        if (repostElements.length === 0) {
+          logErrors.push({
+            error: "title error",
+            detail: "Can't find button share",
+          });
+        }
 
         const data = [
           { id: 1, comment: "Very good" },
@@ -49,53 +47,63 @@ async function featureCommentX(
         ];
         const replyRandom = data[Math.floor(Math.random() * data.length)];
 
-        const positionComment = await commentElements[
-          indexRandom
-        ].boundingBox();
-        let totalHeight = 0;
+        const indexRandom = Math.floor(Math.random() * repostElements.length);
 
-        while (totalHeight < positionComment.y) {
-          await page.mouse.wheel({ deltaY: random(300, 1000) });
+        try {
+          await repostElements[indexRandom].click();
           await delay(random(1000, 3000));
-          totalHeight += random(300, 1000);
+
+          await page.click('a[href="/compose/tweet"]');
+          await delay(random(1000, 3000));
+
+          await page.type('div[data-contents="true"]', replyRandom.comment);
+          await delay(random(1000, 3000));
+
+          await page.click('div[data-testid="tweetButton"]');
+          await delay(random(1000, 3000));
+        } catch (error) {
+          logErrors.push({
+            error: "title error",
+            detail: error.message,
+          });
         }
 
-        await page.mouse.wheel({ deltaY: random(300, 1000) });
-        await delay(random(1000, 3000));
-
-        await commentElements[indexRandom].click();
-        await delay(random(1000, 3000));
-
-        await page.type('div[data-contents="true"]', replyRandom.comment);
-        await delay(random(1000, 3000));
-
-        await page.click('div[data-testid="tweetButton"]');
-        await delay(random(1000, 3000));
-
-        const commentCurrentTime = new Date().getTime();
+        const shareCurrentTime = new Date().getTime();
         let scrollTime = new Date().getTime();
-
-        while (scrollTime - commentCurrentTime < (2 / 3) * commentAverageTime) {
+        try {
           await page.mouse.wheel({ deltaY: random(300, 1000) });
           await delay(random(1000, 3000));
-          scrollTime = new Date().getTime();
+
+          while (scrollTime - shareCurrentTime < (2 / 3) * shareAverageTime) {
+            await page.mouse.wheel({ deltaY: random(300, 1000) });
+            await delay(random(1000, 3000));
+            scrollTime = new Date().getTime();
+          }
+        } catch (error) {
+          logErrors.push({
+            error: "title error",
+            detail: error.message,
+          });
         }
 
         numberStart++;
       }
-
       await page.mouse.wheel({ deltaY: random(300, 1000) });
       await delay(random(1000, 3000));
 
       currentTime = new Date().getTime();
     }
   } catch (error) {
-    console.log("Tinh nang comment khong thuc hien duoc.");
+    logErrors.push({
+      error: "title error",
+      detail: error.message,
+    });
   }
 }
+
 await page.goto("https://twitter.com/home", {
         timeout: 30000,
         waitUntil: "networkidle2",
       });
-await delay(random(1000, 3000));
-await featureCommentX(page, 4, 0, 3);
+await delay(random(1000,3000));
+await featureShareX(page, 4, 0, 3);

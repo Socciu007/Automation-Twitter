@@ -11,6 +11,7 @@ async function featureCommentX(
   numberStart,
   numberFinish
 ) {
+  let logErrors = [];
   try {
     await page.mouse.wheel({ deltaY: random(300, 1000) });
     await delay(random(1000, 3000));
@@ -32,7 +33,10 @@ async function featureCommentX(
         const commentElements = await page.$$('div[data-testid="reply"]');
         await delay(random(1000, 3000));
         if (commentElements.length === 0) {
-          throw new Error("Khong tim thay phan tu reply");
+          logErrors.push({
+            error: "title error",
+            detail: "Can't find button like",
+          });
         }
 
         const indexRandom = Math.floor(Math.random() * commentElements.length);
@@ -52,6 +56,12 @@ async function featureCommentX(
         const positionComment = await commentElements[
           indexRandom
         ].boundingBox();
+        if (!positionComment) {
+          logErrors.push({
+            error: "title error",
+            detail: "Can't show position like",
+          });
+        }
         let totalHeight = 0;
 
         while (totalHeight < positionComment.y) {
@@ -62,15 +72,21 @@ async function featureCommentX(
 
         await page.mouse.wheel({ deltaY: random(300, 1000) });
         await delay(random(1000, 3000));
+        try {
+          await commentElements[indexRandom].click();
+          await delay(random(1000, 3000));
 
-        await commentElements[indexRandom].click();
-        await delay(random(1000, 3000));
+          await page.type('div[data-contents="true"]', replyRandom.comment);
+          await delay(random(1000, 3000));
 
-        await page.type('div[data-contents="true"]', replyRandom.comment);
-        await delay(random(1000, 3000));
-
-        await page.click('div[data-testid="tweetButton"]');
-        await delay(random(1000, 3000));
+          await page.click('div[data-testid="tweetButton"]');
+          await delay(random(1000, 3000));
+        } catch (error) {
+          logErrors.push({
+            error: "title error",
+            detail: error.message,
+          });
+        }
 
         const commentCurrentTime = new Date().getTime();
         let scrollTime = new Date().getTime();
@@ -90,7 +106,10 @@ async function featureCommentX(
       currentTime = new Date().getTime();
     }
   } catch (error) {
-    console.log("Tinh nang comment khong thuc hien duoc.");
+    logErrors.push({
+      error: "title error",
+      detail: error.message,
+    });
   }
 }
 
