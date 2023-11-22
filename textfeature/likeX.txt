@@ -54,21 +54,20 @@ async function featureLikeX(
 
           if (likeElements[indexRandom]) {
             await likeElements[indexRandom].click();
+            await delay(random(1000, 3000));
             const likeCurrentTime = new Date().getTime();
             let scrollTime = new Date().getTime();
 
-            while (scrollTime - likeCurrentTime < likeAverageTime) {
+            while (scrollTime - likeCurrentTime < (2 / 3) * likeAverageTime) {
               await page.mouse.wheel({ deltaY: random(300, 1000) });
               await delay(random(1000, 3000));
               scrollTime = new Date().getTime();
+              console.log(scrollTime - likeCurrentTime, likeAverageTime);
             }
             return;
           }
 
-          const likeElement = await page.$('div[data-testid="like"]');
-          await likeElement.click();
           await delay(random(1000, 3000));
-
           return;
         };
         await scrollToLike(random(0, 100), likeAverageTime);
@@ -92,3 +91,6 @@ await page.goto("https://twitter.com/home", {
       });
 await delay(3000);
 await featureLikeX(page, 4, 0, 3);
+
+
+
