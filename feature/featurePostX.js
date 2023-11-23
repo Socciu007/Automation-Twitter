@@ -166,9 +166,15 @@ async function featurePostStatusX(page, scrollTime, body = {}) {
         await delay(random(1000, 3000));
 
         try {
-          await page.type("input[name=Choice1]", "Option1");
+          await page.type(
+            "input[name=Choice1]",
+            data[Math.floor(Math.random() * data.length)]
+          );
           await delay(random(1000, 3000));
-          await page.type("input[name=Choice2]", "Option2");
+          await page.type(
+            "input[name=Choice2]",
+            data[Math.floor(Math.random() * data.length)]
+          );
           await delay(random(1000, 3000));
         } catch (error) {
           logErrors.push({

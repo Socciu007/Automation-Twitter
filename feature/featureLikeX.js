@@ -22,14 +22,13 @@ async function featureLikeX(
 
     while (currentTime - startTime < durationInMilliseconds) {
       let likeStartTime = (5 / 100) * durationInMilliseconds;
+      const likeAverageTime =
+        durationInMilliseconds / (numberFinish - numberStart);
       while (currentTime - startTime < likeStartTime) {
         await page.mouse.wheel({ deltaY: random(300, 1000) });
         await delay(random(1000, 3000));
         currentTime = new Date().getTime();
       }
-
-      const likeAverageTime =
-        durationInMilliseconds / (numberFinish - numberStart);
 
       while (numberStart < numberFinish) {
         const likeElements = await page.$$('div[data-testid="like"]');
@@ -37,9 +36,10 @@ async function featureLikeX(
 
         if (likeElements.length === 0) {
           logErrors.push({
-            status: "ERR",
-            message: error.message,
+            error: "title error",
+            detail: "Can't find button like",
           });
+          return logErrors;
         }
 
         let indexRandom = Math.floor(Math.random() * likeElements.length);
@@ -47,12 +47,13 @@ async function featureLikeX(
         await delay(random(1000, 3000));
         if (!positionLike) {
           logErrors.push({
-            status: "ERR",
-            message: error.message,
+            error: "title error",
+            detail: "Can't find position like",
           });
+          return logErrors;
         }
 
-        const scrollToLike = async (totalHeight, likeAverageTime) => {
+        const scrollToLike = async (totalHeight) => {
           if (totalHeight < positionLike.y) {
             await page.mouse.wheel({ deltaY: random(300, 1000) });
             await delay(random(1000, 3000));
@@ -62,27 +63,27 @@ async function featureLikeX(
           if (likeElements[indexRandom]) {
             await likeElements[indexRandom].click();
             await delay(random(1000, 3000));
-            const likeCurrentTime = new Date().getTime();
-            let scrollTime = new Date().getTime();
-
-            while (scrollTime - likeCurrentTime < (2 / 3) * likeAverageTime) {
-              await page.mouse.wheel({ deltaY: random(300, 1000) });
-              await delay(random(1000, 3000));
-              scrollTime = new Date().getTime();
-              console.log(scrollTime - likeCurrentTime, likeAverageTime);
-            }
             return;
           } else {
             logErrors.push({
-              status: "ERR",
-              message: "Khong tim thay click like",
+              error: "title error",
+              detail: "Can't click like",
             });
           }
-
-          await delay(random(1000, 3000));
           return;
         };
-        await scrollToLike(random(0, 100), likeAverageTime);
+        await scrollToLike(random(0, 100));
+        const likeCurrentTime = new Date().getTime();
+        let scrollTime = new Date().getTime();
+        const waitTimeLike = random(
+          (1 / 3) * likeAverageTime,
+          (2 / 3) * likeAverageTime
+        );
+        while (scrollTime - likeCurrentTime < waitTimeLike) {
+          await page.mouse.wheel({ deltaY: random(300, 1000) });
+          await delay(random(1000, 3000));
+          scrollTime = new Date().getTime();
+        }
         await delay(random(1000, 3000));
 
         numberStart++;
@@ -95,8 +96,8 @@ async function featureLikeX(
     }
   } catch (error) {
     logErrors.push({
-      status: "ERR",
-      message: "Tinh nang like khong the thuc hien",
+      error: "title error",
+      detail: error.message,
     });
   }
 }

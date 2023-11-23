@@ -70,11 +70,15 @@ async function featureShareX(
 
         const shareCurrentTime = new Date().getTime();
         let scrollTime = new Date().getTime();
+        const waitTime = random(
+          (1 / 3) * shareAverageTime,
+          (2 / 3) * shareAverageTime
+        );
         try {
           await page.mouse.wheel({ deltaY: random(300, 1000) });
           await delay(random(1000, 3000));
 
-          while (scrollTime - shareCurrentTime < (2 / 3) * shareAverageTime) {
+          while (scrollTime - shareCurrentTime < waitTime) {
             await page.mouse.wheel({ deltaY: random(300, 1000) });
             await delay(random(1000, 3000));
             scrollTime = new Date().getTime();

@@ -90,8 +90,12 @@ async function featureCommentX(
 
         const commentCurrentTime = new Date().getTime();
         let scrollTime = new Date().getTime();
+        const waitTime = random(
+          (1 / 3) * commentAverageTime,
+          (2 / 3) * commentAverageTime
+        );
 
-        while (scrollTime - commentCurrentTime < (2 / 3) * commentAverageTime) {
+        while (scrollTime - commentCurrentTime < waitTime) {
           await page.mouse.wheel({ deltaY: random(300, 1000) });
           await delay(random(1000, 3000));
           scrollTime = new Date().getTime();

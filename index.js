@@ -1,8 +1,9 @@
 import Hidemyacc from "./hidemyacc.js";
 import puppeteer from "puppeteer-core";
 // import featureAutoScroll from "./feature/featureAutoScrollX.js";
-import featureLikeX from "./feature/featureLikeX.js";
-// import featureCommentX from "./feature/featureCommentX.js";
+// import featureLikeX from "./feature/featureLikeX.js";
+// import featureInboxX from "./feature/featureInboxX.js";
+import featureCommentX from "./feature/featureCommentX.js";
 // import featureShareX from "./feature/featureShareX.js";
 const delay = (timeout) =>
   new Promise((resolve) => setTimeout(resolve, timeout));
@@ -49,10 +50,10 @@ async function runProfiles(profiles, numberProfile) {
         waitUntil: "networkidle2",
       });
 
-      // await featureAutoScroll(page, 1);
       await delay(3000);
-      await featureLikeX(page, 4, 0, 4);
-      // await featureCommentX(page, 4, 0, 3);
+      // await featureAutoScroll(page, 1);
+      // await featureLikeX(page, 4, 0, 4);
+      await featureCommentX(page, 4, 0, 3);
       // await featureShareX(page, 4, 0, 4);
       // await featurePostStatus(page, {
       //   status: 'div[aria-label="Everyone can reply"]',
@@ -62,7 +63,8 @@ async function runProfiles(profiles, numberProfile) {
       //   //poll: 'div[aria-label="Add poll"]',
       //   // schedule: 'div[aria-label="Schedule post"]'
       // });
-      // return { browser, page };
+      await featureInboxX(page);
+      return { browser, page };
     });
 
     //run cac tai khoan cung 1 luc

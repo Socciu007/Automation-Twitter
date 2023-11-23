@@ -3,12 +3,10 @@ const delay = (timeout) =>
 const random = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
-
 async function featurePostStatusX(page, scrollTime, body = {}) {
   let logErrors = [];
   try {
     const scrollTimeInMilliseconds = scrollTime * 60 * 1000;
-
     const startTime = new Date().getTime();
     let currentTime = new Date().getTime();
     while (currentTime - startTime < scrollTimeInMilliseconds) {
@@ -17,7 +15,6 @@ async function featurePostStatusX(page, scrollTime, body = {}) {
       currentTime = new Date().getTime();
     }
     await delay(random(1000, 3000));
-
     const data = [
       "Hôm nay that la zuiii",
       "Thật là tuyệt vời",
@@ -49,8 +46,7 @@ async function featurePostStatusX(page, scrollTime, body = {}) {
         });
       }
     }
-
-    const { status, image, gif, emoji, poll, schedule } = body;
+    const { status, gif, emoji, poll } = body;
     if (status) {
       try {
         const clickStatus = await page.$(status);
@@ -78,24 +74,6 @@ async function featurePostStatusX(page, scrollTime, body = {}) {
         });
       }
     }
-
-    if (image) {
-      try {
-        const [fileAvatar] = await Promise.all([
-          page.waitForFileChooser(),
-          page.click(image),
-        ]);
-
-        await fileAvatar.accept(["./avt1.jpeg"]);
-        await delay(random(1000, 3000));
-      } catch (error) {
-        logErrors.push({
-          error: "title error",
-          detail: error.message,
-        });
-      }
-    }
-
     if (gif) {
       try {
         const buttonGif = await page.$(gif);
@@ -152,7 +130,6 @@ async function featurePostStatusX(page, scrollTime, body = {}) {
         console.log("Khong the chon emoji");
       }
     }
-
     if (poll) {
       try {
         const clickPoll = await page.$(poll);
@@ -164,11 +141,16 @@ async function featurePostStatusX(page, scrollTime, body = {}) {
         }
         await clickPoll.click();
         await delay(random(1000, 3000));
-
         try {
-          await page.type("input[name=Choice1]", "Option1");
+          await page.type(
+            "input[name=Choice1]",
+            data[Math.floor(Math.random() * data.length)]
+          );
           await delay(random(1000, 3000));
-          await page.type("input[name=Choice2]", "Option2");
+          await page.type(
+            "input[name=Choice2]",
+            data[Math.floor(Math.random() * data.length)]
+          );
           await delay(random(1000, 3000));
         } catch (error) {
           logErrors.push({
@@ -176,15 +158,6 @@ async function featurePostStatusX(page, scrollTime, body = {}) {
             detail: error.message,
           });
         }
-        //Them option (neu muon)
-        // const addChoice = await page.$('div[aria-label="Add a choice"]');
-        // await addChoice.click()
-        // await delay(random(1000, 3000));
-        // await page.type("input[name=Choice3]", "Option3");
-
-        // Setup time poll
-        // const addChoice = await page.$('select[data-testid="selectPollDays"]');
-        // await addChoice.click()
       } catch (error) {
         logErrors.push({
           error: "title error",
@@ -193,7 +166,6 @@ async function featurePostStatusX(page, scrollTime, body = {}) {
       }
     }
     await delay(random(1000, 3000));
-
     const clickPost_0 = await page.$('div[data-testid="tweetButtonInline"]');
     const clickPost_1 = await page.$('div[data-testid="tweetButton"]');
     if (clickPost_0 || clickPost_1) {
@@ -217,7 +189,6 @@ async function featurePostStatusX(page, scrollTime, body = {}) {
     });
   }
 }
-
 await page.goto("https://twitter.com/home", {
         timeout: 30000,
         waitUntil: "networkidle2",
