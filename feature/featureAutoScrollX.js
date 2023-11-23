@@ -1,33 +1,24 @@
 const delay = (timeout) =>
   new Promise((resolve) => setTimeout(resolve, timeout));
-
-async function featureAutoScrollX(page, durationInMinutes) {
+const random = (min, max) => {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+};
+async function featureAutoScrollX(page, scrollTime) {
+  let logErrors = [];
   try {
-    await page.evaluate(async (durationInMinutes) => {
-      await new Promise((resolve, reject) => {
-        const random = (min, max) => {
-          return Math.floor(Math.random() * (max - min + 1)) + min;
-        };
-
-        const durationInMilliseconds = durationInMinutes * 60 * 1000;
-        const startTime = new Date().getTime();
-        let currentTime = new Date().getTime();
-
-        const scrollInterval = setInterval(async () => {
-          window.scrollBy(0, random(100, 700));
-          currentTime = new Date().getTime();
-          await delay(random(1000, 3000));
-
-          if (currentTime - startTime >= durationInMilliseconds) {
-            clearInterval(scrollInterval);
-            resolve();
-          }
-        }, 1000);
-      });
-    }, durationInMinutes);
+    const scrollTimeInMilliseconds = scrollTime * 60 * 1000;
+    const startTime = new Date().getTime();
+    let currentTime = new Date().getTime();
+    while (currentTime - startTime < scrollTimeInMilliseconds) {
+      await page.mouse.wheel({ deltaY: random(300, 1000) });
+      await delay(random(1000, 3000));
+      currentTime = new Date().getTime();
+    }
   } catch (error) {
-    console.log("Tinh nang luot newsfeed loi", error);
+    logErrors.push({
+      error: "title error",
+      detail: error.message,
+    });
   }
 }
-
 export default featureAutoScrollX;

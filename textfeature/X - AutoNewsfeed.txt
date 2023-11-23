@@ -1,24 +1,29 @@
-async function autoScroll(page) {
-  await page.evaluate(async () => {
-    await new Promise((resolve, reject) => {
-      let totalHeight = 0;
-      const distance = 100;
-      const scrollInterval = setInterval(() => {
-        const scrollHeight = document.body.scrollHeight;
-        window.scrollBy(0, distance);
-        totalHeight += distance;
-
-        if (totalHeight <= scrollHeight) {
-          clearInterval(scrollInterval);
-          resolve();
-        }
-      }, 1000);
+const delay = (timeout) =>
+  new Promise((resolve) => setTimeout(resolve, timeout));
+const random = (min, max) => {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+};
+async function featureAutoScrollX(page, scrollTime) {
+  let logErrors = [];
+  try {
+    const scrollTimeInMilliseconds = scrollTime * 60 * 1000;
+    const startTime = new Date().getTime();
+    let currentTime = new Date().getTime();
+    while (currentTime - startTime < scrollTimeInMilliseconds) {
+      await page.mouse.wheel({ deltaY: random(300, 1000) });
+      await delay(random(1000, 3000));
+      currentTime = new Date().getTime();
+    }
+  } catch (error) {
+    logErrors.push({
+      error: "title error",
+      detail: error.message,
     });
-  });
+  }
 }
-await page.goto("https://twitter.com/home", {
-        timeout: 30000,
+ await page.goto("https://twitter.com/home", {
+        timeout: 60000,
         waitUntil: "networkidle2",
       });
-await delay(3000);
-await autoScroll(page);
+      await delay(random(1000, 3000));
+      await featureAutoScrollX(page, 1);
