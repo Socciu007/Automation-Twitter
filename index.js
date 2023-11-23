@@ -3,6 +3,7 @@ import puppeteer from "puppeteer-core";
 // import featureAutoScroll from "./feature/featureAutoScrollX.js";
 // import featureLikeX from "./feature/featureLikeX.js";
 import featureInboxX from "./feature/featureInboxX.js";
+import featureReadNotiX from "./feature/featureReadNotiX.js";
 // import featureShareNotTitleX from "./feature/featureShareX.js";
 // import featureCommentX from "./feature/featureCommentX.js";
 // import featureShareX from "./feature/featureShareX.js";
@@ -65,7 +66,8 @@ async function runProfiles(profiles, numberProfile) {
       //   //poll: 'div[aria-label="Add poll"]',
       //   // schedule: 'div[aria-label="Schedule post"]'
       // });
-      await featureInboxX(page);
+      // await featureInboxX(page);
+      await featureReadNotiX(page);
       return { browser, page };
     });
 
