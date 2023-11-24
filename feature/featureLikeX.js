@@ -4,7 +4,6 @@ const random = (min, max) => {
 
 const delay = (timeout) =>
   new Promise((resolve) => setTimeout(resolve, timeout));
-
 async function featureLikeX(
   page,
   durationInMinutes,
@@ -13,19 +12,16 @@ async function featureLikeX(
 ) {
   let logErrors = [];
   try {
-    await page.mouse.wheel({ deltaY: random(300, 1000) });
-    await delay(random(1000, 3000));
-
     const durationInMilliseconds = durationInMinutes * 60 * 1000;
     const startTime = new Date().getTime();
+    const likeAverageTime =
+      durationInMilliseconds / (numberFinish - numberStart);
     let currentTime = new Date().getTime();
 
     while (currentTime - startTime < durationInMilliseconds) {
       let likeStartTime = (5 / 100) * durationInMilliseconds;
-      const likeAverageTime =
-        durationInMilliseconds / (numberFinish - numberStart);
       while (currentTime - startTime < likeStartTime) {
-        await page.mouse.wheel({ deltaY: random(300, 1000) });
+        await page.mouse.wheel({ deltaY: random(500, 1000) });
         await delay(random(1000, 3000));
         currentTime = new Date().getTime();
       }
@@ -39,10 +35,10 @@ async function featureLikeX(
             error: "title error",
             detail: "Can't find button like",
           });
-          return logErrors;
+          return;
         }
 
-        let indexRandom = Math.floor(Math.random() * likeElements.length);
+        const indexRandom = Math.floor(Math.random() * likeElements.length);
         const positionLike = await likeElements[indexRandom].boundingBox();
         await delay(random(1000, 3000));
         if (!positionLike) {
@@ -50,14 +46,14 @@ async function featureLikeX(
             error: "title error",
             detail: "Can't find position like",
           });
-          return logErrors;
+          return;
         }
 
         const scrollToLike = async (totalHeight) => {
           if (totalHeight < positionLike.y) {
-            await page.mouse.wheel({ deltaY: random(300, 1000) });
+            await page.mouse.wheel({ deltaY: random(500, 1000) });
             await delay(random(1000, 3000));
-            return await scrollToLike(totalHeight + random(300, 1000));
+            return await scrollToLike(totalHeight + random(500, 1000));
           }
 
           if (likeElements[indexRandom]) {
@@ -69,9 +65,10 @@ async function featureLikeX(
               error: "title error",
               detail: "Can't click like",
             });
+            return;
           }
-          return;
         };
+
         await scrollToLike(random(0, 100));
         const likeCurrentTime = new Date().getTime();
         let scrollTime = new Date().getTime();
@@ -80,7 +77,7 @@ async function featureLikeX(
           (2 / 3) * likeAverageTime
         );
         while (scrollTime - likeCurrentTime < waitTimeLike) {
-          await page.mouse.wheel({ deltaY: random(300, 1000) });
+          await page.mouse.wheel({ deltaY: random(500, 1000) });
           await delay(random(1000, 3000));
           scrollTime = new Date().getTime();
         }
@@ -89,7 +86,7 @@ async function featureLikeX(
         numberStart++;
       }
 
-      await page.mouse.wheel({ deltaY: random(300, 1000) });
+      await page.mouse.wheel({ deltaY: random(500, 1000) });
       await delay(random(1000, 3000));
 
       currentTime = new Date().getTime();
@@ -100,6 +97,7 @@ async function featureLikeX(
       detail: error.message,
     });
   }
+  return logErrors;
 }
 
 export default featureLikeX;

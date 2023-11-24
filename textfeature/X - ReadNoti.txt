@@ -24,6 +24,7 @@ async function featureReadNotiX(page) {
           error: "title error",
           detail: "Can't find button notifications",
         });
+        return;
       }
       const selectNoti_0 = await page.$$("ul.r-mabqd8");
       const selectNoti_1 = await page.$$('ul[role="list"]');
@@ -45,6 +46,7 @@ async function featureReadNotiX(page) {
             error: "title error",
             detail: error.message,
           });
+          return;
         }
         numberNoti++;
       } else if (selectNoti_1) {
@@ -65,6 +67,7 @@ async function featureReadNotiX(page) {
             error: "title error",
             detail: error.message,
           });
+          return;
         }
         numberNoti++;
       }
@@ -75,9 +78,10 @@ async function featureReadNotiX(page) {
       detail: error.message,
     });
   }
+  return logErrors;
 }
 await page.goto("https://twitter.com/home", {
-        timeout: 30000,
+        timeout: 60000,
         waitUntil: "networkidle2",
       });
 

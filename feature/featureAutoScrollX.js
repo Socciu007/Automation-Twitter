@@ -20,5 +20,6 @@ async function featureAutoScrollX(page, scrollTime) {
       detail: error.message,
     });
   }
+  return logErrors;
 }
 export default featureAutoScrollX;

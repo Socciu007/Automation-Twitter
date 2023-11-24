@@ -24,6 +24,7 @@ async function featureReadNotiX(page) {
           error: "title error",
           detail: "Can't find button notifications",
         });
+        return;
       }
 
       //   const selectNoti = await page.$$('div[data-testid="cellInnerDiv"]');
@@ -38,7 +39,6 @@ async function featureReadNotiX(page) {
           await page.mouse.wheel({ deltaY: random(100, 500) });
           await delay(random(1000, 3000));
           totalHeight += random(100, 500);
-          console.log(totalHeight, positionNoti.y);
         }
         try {
           await selectNoti_0[indexRandom].click();
@@ -48,6 +48,7 @@ async function featureReadNotiX(page) {
             error: "title error",
             detail: error.message,
           });
+          return;
         }
         numberNoti++;
       } else if (selectNoti_1) {
@@ -58,7 +59,6 @@ async function featureReadNotiX(page) {
           await page.mouse.wheel({ deltaY: random(100, 500) });
           await delay(random(1000, 3000));
           totalHeight += random(100, 500);
-          console.log(totalHeight, positionNoti.y);
         }
         try {
           await selectNoti_1[indexRandom].click();
@@ -68,6 +68,7 @@ async function featureReadNotiX(page) {
             error: "title error",
             detail: error.message,
           });
+          return;
         }
         numberNoti++;
       }
@@ -77,6 +78,7 @@ async function featureReadNotiX(page) {
       error: "title error",
       detail: error.message,
     });
+    return logErrors;
   }
 }
 

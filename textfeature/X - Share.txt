@@ -33,6 +33,7 @@ async function featureShareX(
             error: "title error",
             detail: "Can't find button share",
           });
+          return;
         }
 
         const data = [
@@ -66,6 +67,7 @@ async function featureShareX(
             error: "title error",
             detail: error.message,
           });
+          return;
         }
 
         const shareCurrentTime = new Date().getTime();
@@ -88,6 +90,7 @@ async function featureShareX(
             error: "title error",
             detail: error.message,
           });
+          return;
         }
 
         numberStart++;
@@ -103,10 +106,11 @@ async function featureShareX(
       detail: error.message,
     });
   }
+  return logErrors;
 }
 await page.goto("https://twitter.com/home", {
-        timeout: 30000,
+        timeout: 60000,
         waitUntil: "networkidle2",
       });
 await delay(random(1000,3000));
-await featureShareX(page, 4, 0, 3);
+await featureShareX(page, 5, 0, 3);

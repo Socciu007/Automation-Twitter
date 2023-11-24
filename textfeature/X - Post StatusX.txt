@@ -44,6 +44,7 @@ async function featurePostStatusX(page, scrollTime, body = {}) {
           error: "title error",
           detail: error.message,
         });
+        return;
       }
     }
     const { status, gif, emoji, poll } = body;
@@ -55,6 +56,7 @@ async function featurePostStatusX(page, scrollTime, body = {}) {
             error: "title error",
             detail: "Can't button status",
           });
+          return;
         }
         await clickStatus.click();
         await delay(random(1000, 3000));
@@ -64,6 +66,7 @@ async function featurePostStatusX(page, scrollTime, body = {}) {
             error: "title error",
             detail: "Can't select status for postX",
           });
+          return;
         }
         await selectStatus[0].click();
         await delay(random(1000, 3000));
@@ -72,6 +75,7 @@ async function featurePostStatusX(page, scrollTime, body = {}) {
           error: "title error",
           detail: error.message,
         });
+        return;
       }
     }
     if (gif) {
@@ -82,6 +86,7 @@ async function featurePostStatusX(page, scrollTime, body = {}) {
             error: "title error",
             detail: "Can't select gif",
           });
+          return;
         }
         await buttonGif.click();
         await delay(random(1000, 3000));
@@ -92,6 +97,7 @@ async function featurePostStatusX(page, scrollTime, body = {}) {
             error: "title error",
             detail: "Can't select topic gif",
           });
+          return;
         }
         const selectedGif = selectGif.slice(0, 8);
         const indexRandom_0 = Math.floor(Math.random() * 8);
@@ -111,6 +117,7 @@ async function featurePostStatusX(page, scrollTime, body = {}) {
           error: "title error",
           detail: error.message,
         });
+        return;
       }
     }
 
@@ -138,6 +145,7 @@ async function featurePostStatusX(page, scrollTime, body = {}) {
             error: "title error",
             detail: "Can't find button poll of post",
           });
+          return;
         }
         await clickPoll.click();
         await delay(random(1000, 3000));
@@ -157,12 +165,14 @@ async function featurePostStatusX(page, scrollTime, body = {}) {
             error: "title error",
             detail: error.message,
           });
+          return;
         }
       } catch (error) {
         logErrors.push({
           error: "title error",
           detail: error.message,
         });
+        return;
       }
     }
     await delay(random(1000, 3000));
@@ -180,6 +190,7 @@ async function featurePostStatusX(page, scrollTime, body = {}) {
           error: "title error",
           detail: error.message,
         });
+        return;
       }
     }
   } catch (error) {
@@ -188,13 +199,14 @@ async function featurePostStatusX(page, scrollTime, body = {}) {
       detail: error.message,
     });
   }
+  return logErrors;
 }
 await page.goto("https://twitter.com/home", {
-        timeout: 30000,
+        timeout: 60000,
         waitUntil: "networkidle2",
       });
 await delay(random(1000, 3000));
-await featurePostStatusX(page,0.3, {
+await featurePostStatusX(page, 0.5, {
   status: 'div[aria-label="Everyone can reply"]',
   poll: 'div[aria-label="Add poll"]',
 });

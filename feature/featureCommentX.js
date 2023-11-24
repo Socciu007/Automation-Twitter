@@ -37,6 +37,7 @@ async function featureCommentX(
             error: "title error",
             detail: "Can't find button like",
           });
+          return;
         }
 
         const indexRandom = Math.floor(Math.random() * commentElements.length);
@@ -61,6 +62,7 @@ async function featureCommentX(
             error: "title error",
             detail: "Can't show position like",
           });
+          return;
         }
         let totalHeight = 0;
 
@@ -86,6 +88,7 @@ async function featureCommentX(
             error: "title error",
             detail: error.message,
           });
+          return;
         }
 
         const commentCurrentTime = new Date().getTime();
@@ -115,6 +118,7 @@ async function featureCommentX(
       detail: error.message,
     });
   }
+  return logErrors;
 }
 
 export default featureCommentX;

@@ -22,6 +22,7 @@ async function featureInboxX(page) {
         error: "title error",
         detail: "Can't find button inbox",
       });
+      return;
     }
 
     const selectMessage_0 = await page.$$("div.r-1iusvr4");
@@ -33,6 +34,7 @@ async function featureInboxX(page) {
         error: "title error",
         detail: "Can't find people to inbox",
       });
+      return;
     }
 
     const data = [
@@ -89,7 +91,7 @@ async function featureInboxX(page) {
             error: "title error",
             detail: error.message,
           });
-          console.log(logErrors);
+          return;
         }
         numberInbox++;
       }
@@ -103,6 +105,7 @@ async function featureInboxX(page) {
       detail: error.message,
     });
   }
+  return logErrors;
 }
 
 export default featureInboxX;
