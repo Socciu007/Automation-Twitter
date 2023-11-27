@@ -3,14 +3,14 @@ const delay = (timeout) =>
 const random = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
+let logErrors = [];
 async function featurePostStatusX(page, scrollTime, body = {}) {
-  let logErrors = [];
   try {
     const scrollTimeInMilliseconds = scrollTime * 60 * 1000;
     const startTime = new Date().getTime();
     let currentTime = new Date().getTime();
     while (currentTime - startTime < scrollTimeInMilliseconds) {
-      await page.mouse.wheel({ deltaY: random(300, 1000) });
+      await page.mouse.wheel({ deltaY: random(500, 1000) });
       await delay(random(1000, 3000));
       currentTime = new Date().getTime();
     }
@@ -199,8 +199,8 @@ async function featurePostStatusX(page, scrollTime, body = {}) {
       detail: error.message,
     });
   }
-  return logErrors;
 }
+try {
 await page.goto("https://twitter.com/home", {
         timeout: 60000,
         waitUntil: "networkidle2",
@@ -210,3 +210,10 @@ await featurePostStatusX(page, 0.5, {
   status: 'div[aria-label="Everyone can reply"]',
   poll: 'div[aria-label="Add poll"]',
 });
+} catch (error) {
+    logErrors.push({
+        error: "title error",
+        detail: error.message,
+      });
+}
+return logErrors;

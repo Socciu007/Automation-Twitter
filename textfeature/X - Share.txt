@@ -3,14 +3,13 @@ const delay = (timeout) =>
 const random = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
-
+let logErrors = [];
 async function featureShareX(
   page,
   durationInMinutes,
   numberStart,
   numberFinish
 ) {
-  let logErrors = [];
   try {
     const durationInMilliseconds = durationInMinutes * 60 * 1000;
     const shareAverageTime =
@@ -21,7 +20,7 @@ async function featureShareX(
     while (currentTime - startTime <= durationInMilliseconds) {
       let breakTime = (5 / 100) * durationInMilliseconds;
       while (currentTime - startTime < breakTime) {
-        await page.mouse.wheel({ deltaY: random(300, 1000) });
+        await page.mouse.wheel({ deltaY: random(500, 1000) });
         await delay(random(1000, 3000));
         currentTime = new Date().getTime();
       }
@@ -77,11 +76,11 @@ async function featureShareX(
           (2 / 3) * shareAverageTime
         );
         try {
-          await page.mouse.wheel({ deltaY: random(300, 1000) });
+          await page.mouse.wheel({ deltaY: random(500, 1000) });
           await delay(random(1000, 3000));
 
           while (scrollTime - shareCurrentTime < waitTime) {
-            await page.mouse.wheel({ deltaY: random(300, 1000) });
+            await page.mouse.wheel({ deltaY: random(500, 1000) });
             await delay(random(1000, 3000));
             scrollTime = new Date().getTime();
           }
@@ -95,7 +94,7 @@ async function featureShareX(
 
         numberStart++;
       }
-      await page.mouse.wheel({ deltaY: random(300, 1000) });
+      await page.mouse.wheel({ deltaY: random(500, 1000) });
       await delay(random(1000, 3000));
 
       currentTime = new Date().getTime();
@@ -106,11 +105,19 @@ async function featureShareX(
       detail: error.message,
     });
   }
-  return logErrors;
 }
+try {
 await page.goto("https://twitter.com/home", {
         timeout: 60000,
         waitUntil: "networkidle2",
       });
 await delay(random(1000,3000));
 await featureShareX(page, 5, 0, 3);
+    
+} catch (error) {
+    logErrors.push({
+        error: "title error",
+        detail: error.message,
+      });
+}
+return logErrors;

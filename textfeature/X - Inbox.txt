@@ -4,8 +4,8 @@ const random = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
+let logErrors = [];
 async function featureInboxX(page) {
-  let logErrors = [];
   try {
     const buttonMessage_0 = await page.$('a[aria-label="Direct Messages"]');
     const buttonMessage_1 = await page.$(
@@ -26,9 +26,6 @@ async function featureInboxX(page) {
     }
 
     const selectMessage_0 = await page.$$("div.r-1iusvr4");
-    // const selectMessage_1 = await page.$$("div.r-yca7ao");
-    // const selectMessage_2 = await page.$$('span[data-testid="tweetText"]');
-
     if (selectMessage_0.length === 0) {
       logErrors.push({
         error: "title error",
@@ -105,11 +102,18 @@ async function featureInboxX(page) {
       detail: error.message,
     });
   }
-  return logErrors;
 }
+try {
 await page.goto("https://twitter.com/home", {
         timeout: 60000,
         waitUntil: "networkidle2",
       });
 await delay(random(1000,3000));
 await featureInboxX(page);
+} catch (error) {
+    logErrors.push({
+        error: "title error",
+        detail: error.message,
+      });
+}
+return logErrors;

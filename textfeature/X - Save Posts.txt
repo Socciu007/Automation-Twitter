@@ -1,99 +1,83 @@
+const delay = (timeout) =>
+  new Promise((resolve) => setTimeout(resolve, timeout));
 const random = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
-const delay = (timeout) =>
-  new Promise((resolve) => setTimeout(resolve, timeout));
 let logErrors = [];
-async function featureCommentX(
+async function featureSavePostsX(
   page,
   durationInMinutes,
   numberStart,
   numberFinish
 ) {
   try {
-    await page.mouse.wheel({ deltaY: random(500, 1000) });
-    await delay(random(1000, 3000));
     const durationInMilliseconds = durationInMinutes * 60 * 1000;
-    const commentAverageTime =
+    const saveAverageTime =
       durationInMilliseconds / (numberFinish - numberStart);
     const startTime = new Date().getTime();
     let currentTime = new Date().getTime();
+
     while (currentTime - startTime < durationInMilliseconds) {
-      let breakTime = (5 / 100) * durationInMilliseconds;
-      while (currentTime - startTime < breakTime) {
+      while (currentTime - startTime < (5 / 100) * durationInMilliseconds) {
         await page.mouse.wheel({ deltaY: random(500, 1000) });
         await delay(random(1000, 3000));
         currentTime = new Date().getTime();
       }
       while (numberStart < numberFinish) {
-        const commentElements = await page.$$('div[data-testid="reply"]');
+        const buttonSave = await page.$$('div[data-testid="bookmark"]');
         await delay(random(1000, 3000));
-        if (commentElements.length === 0) {
+        if (buttonSave.length === 0) {
           logErrors.push({
             error: "title error",
-            detail: "Can't find button like",
+            detail: "Can't find button save",
           });
           return;
         }
-        const indexRandom = Math.floor(Math.random() * commentElements.length);
-        const data = [
-          { id: 1, comment: "Very good" },
-          { id: 2, comment: "good good good" },
-          { id: 3, comment: "so surprised" },
-          { id: 4, comment: "too cute" },
-          { id: 5, comment: "That's so great" },
-          { id: 6, comment: "it's awful" },
-          { id: 7, comment: "so beautiful" },
-          { id: 8, comment: "so wonderful" },
-        ];
-        const replyRandom = data[Math.floor(Math.random() * data.length)];
-        const positionComment = await commentElements[
-          indexRandom
-        ].boundingBox();
-        if (!positionComment) {
+
+        const index = random(0, buttonSave.length - 1);
+        const positionSave = await buttonSave[index].boundingBox();
+        await delay(random(1000, 3000));
+        if (!positionSave) {
           logErrors.push({
             error: "title error",
-            detail: "Can't show position like",
+            detail: "Can't find position save",
           });
           return;
         }
+
         let totalHeight = 0;
-        while (totalHeight < positionComment.y) {
+        while (totalHeight < positionSave.y) {
           await page.mouse.wheel({ deltaY: random(500, 1000) });
           await delay(random(1000, 3000));
           totalHeight += random(500, 1000);
         }
 
-        try {
-          await commentElements[indexRandom].click();
+        if (buttonSave[index]) {
+          await buttonSave[index].click();
           await delay(random(1000, 3000));
-
-          await page.type('div[data-contents="true"]', replyRandom.comment);
-          await delay(random(1000, 3000));
-
-          await page.click('div[data-testid="tweetButton"]');
-          await delay(random(1000, 3000));
-        } catch (error) {
+        } else {
           logErrors.push({
             error: "title error",
-            detail: error.message,
+            detail: "Can't click save",
           });
           return;
         }
-        const commentCurrentTime = new Date().getTime();
+
+        const saveCurrentTime = new Date().getTime();
         let scrollTime = new Date().getTime();
-        const waitTime = random(
-          (1 / 3) * commentAverageTime,
-          (2 / 3) * commentAverageTime
+        const waitSaveTime = random(
+          (1 / 3) * saveAverageTime,
+          (2 / 3) * saveAverageTime
         );
-        while (scrollTime - commentCurrentTime < waitTime) {
+        while (scrollTime - saveCurrentTime < waitSaveTime) {
           await page.mouse.wheel({ deltaY: random(500, 1000) });
           await delay(random(1000, 3000));
           scrollTime = new Date().getTime();
         }
+        await delay(random(1000, 3000));
+
         numberStart++;
       }
-
       await page.mouse.wheel({ deltaY: random(500, 1000) });
       await delay(random(1000, 3000));
       currentTime = new Date().getTime();
@@ -107,11 +91,11 @@ async function featureCommentX(
 }
 try {
 await page.goto("https://twitter.com/home", {
-        timeout: 60000,
+        timeout: 30000,
         waitUntil: "networkidle2",
       });
 await delay(random(1000, 3000));
-await featureCommentX(page, 5, 0, 3);
+await featureSavePostsX(page, 4, 0, 3);
 } catch (error) {
     logErrors.push({
         error: "title error",

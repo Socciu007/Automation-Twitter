@@ -8,9 +8,10 @@ async function featureLikeX(
   page,
   durationInMinutes,
   numberStart,
-  numberFinish
+  numberFinish,
+  logErrors
 ) {
-  let logErrors = [];
+  // let logErrors = [];
   try {
     const durationInMilliseconds = durationInMinutes * 60 * 1000;
     const startTime = new Date().getTime();
@@ -96,8 +97,8 @@ async function featureLikeX(
       error: "title error",
       detail: error.message,
     });
+    // return logErrors;
   }
-  return logErrors;
 }
 
 export default featureLikeX;

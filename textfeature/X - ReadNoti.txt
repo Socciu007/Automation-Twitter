@@ -3,8 +3,8 @@ const delay = (timeout) =>
 const random = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
+let logErrors = [];
 async function featureReadNotiX(page) {
-  let logErrors = [];
   try {
     let numberNoti = 0;
     while (numberNoti < random(1, 3)) {
@@ -78,8 +78,8 @@ async function featureReadNotiX(page) {
       detail: error.message,
     });
   }
-  return logErrors;
 }
+try {
 await page.goto("https://twitter.com/home", {
         timeout: 60000,
         waitUntil: "networkidle2",
@@ -87,3 +87,10 @@ await page.goto("https://twitter.com/home", {
 
       await delay(3000);
 await featureReadNotiX(page);
+} catch (error) {
+    logErrors.push({
+        error: "title error",
+        detail: error.message,
+      });
+}
+return logErrors;

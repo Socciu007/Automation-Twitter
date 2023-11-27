@@ -1,12 +1,15 @@
 import Hidemyacc from "./hidemyacc.js";
 import puppeteer from "puppeteer-core";
 // import featureAutoScroll from "./feature/featureAutoScrollX.js";
-import featureLikeX from "./feature/featureLikeX.js";
+// import featureLikeX from "./feature/featureLikeX.js";
+// import featureSavePostsX from "./feature/featureSavePostsX.js";
+import featureUnfollowingX from "./feature/featureUnfollowingX.js";
 // import featureInboxX from "./feature/featureInboxX.js";
 // import featureReadNotiX from "./feature/featureReadNotiX.js";
 // import featureShareNotTitleX from "./feature/featureShareX.js";
 // import featureCommentX from "./feature/featureCommentX.js";
 // import featureShareX from "./feature/featureShareX.js";
+let logErrors = [];
 const delay = (timeout) =>
   new Promise((resolve) => setTimeout(resolve, timeout));
 
@@ -54,7 +57,10 @@ async function runProfiles(profiles, numberProfile) {
 
       await delay(3000);
       // await featureAutoScroll(page, 1);
-      await featureLikeX(page, 5, 0, 4);
+      // await featureSavePostsX(page, 4, 0, 3, logErrors);
+      await featureUnfollowingX(page, logErrors);
+      // await featureLikeX(page, 5, 0, 4, logErrors);
+      console.log(logErrors);
       // await featureCommentX(page, 4, 0, 3);
       // await featureShareX(page, 4, 0, 4);
       // await featureShareNotTitleX(page, 4, 0, 3);
@@ -68,7 +74,7 @@ async function runProfiles(profiles, numberProfile) {
       // });
       // await featureInboxX(page);
       // await featureReadNotiX(page);
-      return logErrors;
+      // return logErrors;
     });
 
     //run cac tai khoan cung 1 luc

@@ -3,13 +3,13 @@ const random = (min, max) => {
 };
 const delay = (timeout) =>
   new Promise((resolve) => setTimeout(resolve, timeout));
+let logErrors = [];
 async function featureLikeX(
   page,
   durationInMinutes,
   numberStart,
   numberFinish
 ) {
-  let logErrors = [];
   try {
     const durationInMilliseconds = durationInMinutes * 60 * 1000;
     const startTime = new Date().getTime();
@@ -91,11 +91,18 @@ async function featureLikeX(
       detail: error.message,
     });
   }
-  return logErrors;
 }
+try {
 await page.goto("https://twitter.com/home", {
         timeout: 60000,
         waitUntil: "networkidle2",
       });
 await delay(3000);
 await featureLikeX(page, 5, 0, 4);
+} catch (error) {
+    logErrors.push({
+        error: "title error",
+        detail: error.message,
+      });
+}
+return logErrors;
