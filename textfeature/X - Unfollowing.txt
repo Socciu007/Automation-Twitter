@@ -105,6 +105,17 @@ await page.goto("https://twitter.com/home", {
         timeout: 60000,
         waitUntil: "networkidle2",
       });
+await delay(random(1000, 3000));
+const currentUrl = await page.url();
+      if (!currentUrl.includes("twitter.com/home")) {
+        logErrors.push({
+          error: "title error",
+          detail: "You need to log in X",
+        });
+        await delay(random(1000, 3000));
+        await browser.close();
+        return logErrors;
+      }
       await delay(random(1000, 3000));
 await featureUnfollowingX(page);
 } catch (error) {

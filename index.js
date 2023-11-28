@@ -55,6 +55,16 @@ async function runProfiles(profiles, numberProfile) {
         waitUntil: "networkidle2",
       });
 
+      const currentUrl = await page.url();
+      console.log(currentUrl);
+      if (!currentUrl.includes("twitter.com/home")) {
+        logErrors.push({
+          error: "title error",
+          detail: "You need to log in X",
+        });
+        return logErrors;
+      }
+
       await delay(3000);
       // await featureAutoScroll(page, 1);
       // await featureSavePostsX(page, 4, 0, 3, logErrors);

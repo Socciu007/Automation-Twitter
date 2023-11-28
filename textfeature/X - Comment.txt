@@ -11,7 +11,7 @@ async function featureCommentX(
   numberFinish
 ) {
   try {
-    await page.mouse.wheel({ deltaY: random(500, 1000) });
+    await page.mouse.wheel({ deltaY: random(500, 700) });
     await delay(random(1000, 3000));
     const durationInMilliseconds = durationInMinutes * 60 * 1000;
     const commentAverageTime =
@@ -21,7 +21,7 @@ async function featureCommentX(
     while (currentTime - startTime < durationInMilliseconds) {
       let breakTime = (5 / 100) * durationInMilliseconds;
       while (currentTime - startTime < breakTime) {
-        await page.mouse.wheel({ deltaY: random(500, 1000) });
+        await page.mouse.wheel({ deltaY: random(500, 700) });
         await delay(random(1000, 3000));
         currentTime = new Date().getTime();
       }
@@ -59,9 +59,9 @@ async function featureCommentX(
         }
         let totalHeight = 0;
         while (totalHeight < positionComment.y) {
-          await page.mouse.wheel({ deltaY: random(500, 1000) });
+          await page.mouse.wheel({ deltaY: random(500, 700) });
           await delay(random(1000, 3000));
-          totalHeight += random(500, 1000);
+          totalHeight += random(500, 700);
         }
 
         try {
@@ -87,14 +87,14 @@ async function featureCommentX(
           (2 / 3) * commentAverageTime
         );
         while (scrollTime - commentCurrentTime < waitTime) {
-          await page.mouse.wheel({ deltaY: random(500, 1000) });
+          await page.mouse.wheel({ deltaY: random(500, 700) });
           await delay(random(1000, 3000));
           scrollTime = new Date().getTime();
         }
         numberStart++;
       }
 
-      await page.mouse.wheel({ deltaY: random(500, 1000) });
+      await page.mouse.wheel({ deltaY: random(500, 700) });
       await delay(random(1000, 3000));
       currentTime = new Date().getTime();
     }
@@ -110,6 +110,17 @@ await page.goto("https://twitter.com/home", {
         timeout: 60000,
         waitUntil: "networkidle2",
       });
+await delay(random(1000, 3000));
+const currentUrl = await page.url();
+      if (!currentUrl.includes("twitter.com/home")) {
+        logErrors.push({
+          error: "title error",
+          detail: "You need to log in X",
+        });
+        await delay(random(1000, 3000));
+        await browser.close();
+        return logErrors;
+      }
 await delay(random(1000, 3000));
 await featureCommentX(page, 5, 0, 3);
 } catch (error) {

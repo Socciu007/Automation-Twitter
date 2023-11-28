@@ -34,9 +34,9 @@ async function featureReadNotiX(page) {
          await delay(random(1000, 3000));
         let totalHeight = 0;
         while (totalHeight < positionNoti.y) {
-          await page.mouse.wheel({ deltaY: random(100, 500) });
+          await page.mouse.wheel({ deltaY: random(200, 500) });
           await delay(random(1000, 3000));
-          totalHeight += random(100, 500);
+          totalHeight += random(200, 500);
         }
         try {
           await selectNoti_0[indexRandom].click();
@@ -55,9 +55,9 @@ async function featureReadNotiX(page) {
          await delay(random(1000, 3000));
         let totalHeight = 0;
         while (totalHeight < positionNoti.y) {
-          await page.mouse.wheel({ deltaY: random(100, 500) });
+          await page.mouse.wheel({ deltaY: random(200, 500) });
           await delay(random(1000, 3000));
-          totalHeight += random(100, 500);
+          totalHeight += random(200, 500);
         }
         try {
           await selectNoti_1[indexRandom].click();
@@ -84,8 +84,18 @@ await page.goto("https://twitter.com/home", {
         timeout: 60000,
         waitUntil: "networkidle2",
       });
-
-      await delay(3000);
+await delay(random(1000, 3000));
+const currentUrl = await page.url();
+      if (!currentUrl.includes("twitter.com/home")) {
+        logErrors.push({
+          error: "title error",
+          detail: "You need to log in X",
+        });
+        await delay(random(1000, 3000));
+        await browser.close();
+        return logErrors;
+      }
+await delay(random(1000, 3000));
 await featureReadNotiX(page);
 } catch (error) {
     logErrors.push({

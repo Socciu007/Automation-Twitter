@@ -19,7 +19,7 @@ async function featureSavePostsX(
 
     while (currentTime - startTime < durationInMilliseconds) {
       while (currentTime - startTime < (5 / 100) * durationInMilliseconds) {
-        await page.mouse.wheel({ deltaY: random(500, 1000) });
+        await page.mouse.wheel({ deltaY: random(500, 700) });
         await delay(random(1000, 3000));
         currentTime = new Date().getTime();
       }
@@ -47,9 +47,9 @@ async function featureSavePostsX(
 
         let totalHeight = 0;
         while (totalHeight < positionSave.y) {
-          await page.mouse.wheel({ deltaY: random(500, 1000) });
+          await page.mouse.wheel({ deltaY: random(500, 700) });
           await delay(random(1000, 3000));
-          totalHeight += random(500, 1000);
+          totalHeight += random(500, 700);
         }
 
         if (buttonSave[index]) {
@@ -70,7 +70,7 @@ async function featureSavePostsX(
           (2 / 3) * saveAverageTime
         );
         while (scrollTime - saveCurrentTime < waitSaveTime) {
-          await page.mouse.wheel({ deltaY: random(500, 1000) });
+          await page.mouse.wheel({ deltaY: random(500, 700) });
           await delay(random(1000, 3000));
           scrollTime = new Date().getTime();
         }
@@ -78,7 +78,7 @@ async function featureSavePostsX(
 
         numberStart++;
       }
-      await page.mouse.wheel({ deltaY: random(500, 1000) });
+      await page.mouse.wheel({ deltaY: random(500, 700) });
       await delay(random(1000, 3000));
       currentTime = new Date().getTime();
     }
@@ -94,6 +94,16 @@ await page.goto("https://twitter.com/home", {
         timeout: 30000,
         waitUntil: "networkidle2",
       });
+const currentUrl = await page.url();
+      if (!currentUrl.includes("twitter.com/home")) {
+        logErrors.push({
+          error: "title error",
+          detail: "You need to log in X",
+        });
+        await delay(random(1000, 3000));
+        await browser.close();
+        return logErrors;
+      }
 await delay(random(1000, 3000));
 await featureSavePostsX(page, 4, 0, 3);
 } catch (error) {

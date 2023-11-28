@@ -19,7 +19,7 @@ async function featureLikeX(
     while (currentTime - startTime < durationInMilliseconds) {
       let likeStartTime = (5 / 100) * durationInMilliseconds;
       while (currentTime - startTime < likeStartTime) {
-        await page.mouse.wheel({ deltaY: random(500, 1000) });
+        await page.mouse.wheel({ deltaY: random(500, 700) });
         await delay(random(1000, 3000));
         currentTime = new Date().getTime();
       }
@@ -46,9 +46,9 @@ async function featureLikeX(
         }
         const scrollToLike = async (totalHeight) => {
           if (totalHeight < positionLike.y) {
-            await page.mouse.wheel({ deltaY: random(500, 1000) });
+            await page.mouse.wheel({ deltaY: random(500, 700) });
             await delay(random(1000, 3000));
-            return await scrollToLike(totalHeight + random(500, 1000));
+            return await scrollToLike(totalHeight + random(500, 700));
           }
 
           if (likeElements[indexRandom]) {
@@ -71,7 +71,7 @@ async function featureLikeX(
           (2 / 3) * likeAverageTime
         );
         while (scrollTime - likeCurrentTime < waitTimeLike) {
-          await page.mouse.wheel({ deltaY: random(500, 1000) });
+          await page.mouse.wheel({ deltaY: random(500, 700) });
           await delay(random(1000, 3000));
           scrollTime = new Date().getTime();
         }
@@ -80,7 +80,7 @@ async function featureLikeX(
         numberStart++;
       }
 
-      await page.mouse.wheel({ deltaY: random(500, 1000) });
+      await page.mouse.wheel({ deltaY: random(500, 700) });
       await delay(random(1000, 3000));
 
       currentTime = new Date().getTime();
@@ -97,7 +97,18 @@ await page.goto("https://twitter.com/home", {
         timeout: 60000,
         waitUntil: "networkidle2",
       });
-await delay(3000);
+await delay(random(1000, 3000));
+const currentUrl = await page.url();
+      if (!currentUrl.includes("twitter.com/home")) {
+        logErrors.push({
+          error: "title error",
+          detail: "You need to log in X",
+        });
+        await delay(random(1000, 3000));
+        await browser.close();
+        return logErrors;
+      }
+await delay(random(1000, 3000));
 await featureLikeX(page, 5, 0, 4);
 } catch (error) {
     logErrors.push({

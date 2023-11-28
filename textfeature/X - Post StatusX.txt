@@ -206,6 +206,17 @@ await page.goto("https://twitter.com/home", {
         waitUntil: "networkidle2",
       });
 await delay(random(1000, 3000));
+const currentUrl = await page.url();
+      if (!currentUrl.includes("twitter.com/home")) {
+        logErrors.push({
+          error: "title error",
+          detail: "You need to log in X",
+        });
+        await delay(random(1000, 3000));
+        await browser.close();
+        return logErrors;
+      }
+await delay(random(1000, 3000));
 await featurePostStatusX(page, 0.5, {
   status: 'div[aria-label="Everyone can reply"]',
   poll: 'div[aria-label="Add poll"]',

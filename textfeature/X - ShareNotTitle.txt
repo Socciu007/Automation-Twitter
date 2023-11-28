@@ -19,7 +19,7 @@ async function featureShareNotTitleX(
     while (currentTime - startTime <= durationInMilliseconds) {
       let breakTime = (5 / 100) * durationInMilliseconds;
       while (currentTime - startTime < breakTime) {
-        await page.mouse.wheel({ deltaY: random(500, 1000) });
+        await page.mouse.wheel({ deltaY: random(500, 700) });
         await delay(random(1000, 3000));
         currentTime = new Date().getTime();
       }
@@ -56,11 +56,11 @@ async function featureShareNotTitleX(
           (2 / 3) * shareAverageTime
         );
         try {
-          await page.mouse.wheel({ deltaY: random(500, 1000) });
+          await page.mouse.wheel({ deltaY: random(500, 700) });
           await delay(random(1000, 3000));
 
           while (scrollTime - shareCurrentTime < waitTime) {
-            await page.mouse.wheel({ deltaY: random(500, 1000) });
+            await page.mouse.wheel({ deltaY: random(500, 700) });
             await delay(random(1000, 3000));
             scrollTime = new Date().getTime();
           }
@@ -74,7 +74,7 @@ async function featureShareNotTitleX(
 
         numberStart++;
       }
-      await page.mouse.wheel({ deltaY: random(500, 1000) });
+      await page.mouse.wheel({ deltaY: random(500, 700) });
       await delay(random(1000, 3000));
 
       currentTime = new Date().getTime();
@@ -91,8 +91,18 @@ await page.goto("https://twitter.com/home", {
         timeout: 60000,
         waitUntil: "networkidle2",
       });
-      await delay(random(1000, 3000));
-
+await delay(random(1000, 3000));
+const currentUrl = await page.url();
+      if (!currentUrl.includes("twitter.com/home")) {
+        logErrors.push({
+          error: "title error",
+          detail: "You need to log in X",
+        });
+        await delay(random(1000, 3000));
+        await browser.close();
+        return logErrors;
+      }
+await delay(random(1000, 3000));
       await featureShareNotTitleX(page, 5, 0, 3)
 } catch (error) {
     logErrors.push({
