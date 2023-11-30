@@ -11,6 +11,21 @@ async function featureCommentX(
   numberFinish
 ) {
   try {
+    await page.goto("https://twitter.com", {
+        timeout: 60000,
+        waitUntil: "networkidle2",
+      });
+await delay(random(1000, 3000));
+const currentUrl = await page.url();
+      if (!currentUrl.includes("twitter.com/home")) {
+        logErrors.push({
+          error: "title error",
+          detail: "You need to log in X",
+        });
+        await delay(random(1000, 3000));
+        return;
+      }
+await delay(random(1000, 3000));
     await page.mouse.wheel({ deltaY: random(500, 700) });
     await delay(random(1000, 3000));
     const durationInMilliseconds = durationInMinutes * 60 * 1000;
@@ -106,22 +121,6 @@ async function featureCommentX(
   }
 }
 try {
-await page.goto("https://twitter.com/home", {
-        timeout: 60000,
-        waitUntil: "networkidle2",
-      });
-await delay(random(1000, 3000));
-const currentUrl = await page.url();
-      if (!currentUrl.includes("twitter.com/home")) {
-        logErrors.push({
-          error: "title error",
-          detail: "You need to log in X",
-        });
-        await delay(random(1000, 3000));
-        await browser.close();
-        return logErrors;
-      }
-await delay(random(1000, 3000));
 await featureCommentX(page, 5, 0, 3);
 } catch (error) {
     logErrors.push({

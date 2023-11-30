@@ -7,6 +7,20 @@ const random = (min, max) => {
 let logErrors = [];
 async function featureInboxX(page) {
   try {
+    await page.goto("https://twitter.com", {
+        timeout: 60000,
+        waitUntil: "networkidle2",
+      });
+await delay(random(1000, 3000));
+const currentUrl = await page.url();
+      if (!currentUrl.includes("twitter.com/home")) {
+        logErrors.push({
+          error: "title error",
+          detail: "You need to log in X",
+        });
+        return;
+      }
+await delay(random(1000, 3000));
     const buttonMessage_0 = await page.$('a[aria-label="Direct Messages"]');
     const buttonMessage_1 = await page.$(
       'a[data-testid="AppTabBar_DirectMessage_Link"]'
@@ -104,22 +118,6 @@ async function featureInboxX(page) {
   }
 }
 try {
-await page.goto("https://twitter.com/home", {
-        timeout: 60000,
-        waitUntil: "networkidle2",
-      });
-await delay(random(1000, 3000));
-const currentUrl = await page.url();
-      if (!currentUrl.includes("twitter.com/home")) {
-        logErrors.push({
-          error: "title error",
-          detail: "You need to log in X",
-        });
-        await delay(random(1000, 3000));
-        await browser.close();
-        return logErrors;
-      }
-await delay(random(1000, 3000));
 await featureInboxX(page);
 } catch (error) {
     logErrors.push({

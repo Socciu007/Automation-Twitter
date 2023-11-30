@@ -56,12 +56,12 @@ async function runProfiles(profiles, numberProfile) {
       });
 
       const currentUrl = await page.url();
-      console.log(currentUrl);
       if (!currentUrl.includes("twitter.com/home")) {
         logErrors.push({
           error: "title error",
           detail: "You need to log in X",
         });
+        await browser.close();
         return logErrors;
       }
 
@@ -70,7 +70,6 @@ async function runProfiles(profiles, numberProfile) {
       // await featureSavePostsX(page, 4, 0, 3, logErrors);
       await featureUnfollowingX(page, logErrors);
       // await featureLikeX(page, 5, 0, 4, logErrors);
-      console.log(logErrors);
       // await featureCommentX(page, 4, 0, 3);
       // await featureShareX(page, 4, 0, 4);
       // await featureShareNotTitleX(page, 4, 0, 3);
@@ -85,6 +84,8 @@ async function runProfiles(profiles, numberProfile) {
       // await featureInboxX(page);
       // await featureReadNotiX(page);
       // return logErrors;
+      // await browser.close();
+      console.log(logErrors);
     });
 
     //run cac tai khoan cung 1 luc

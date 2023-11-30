@@ -11,6 +11,20 @@ async function featureShareX(
   numberFinish
 ) {
   try {
+    await page.goto("https://twitter.com", {
+        timeout: 60000,
+        waitUntil: "networkidle2",
+      });
+await delay(random(1000, 3000));
+const currentUrl = await page.url();
+      if (!currentUrl.includes("twitter.com/home")) {
+        logErrors.push({
+          error: "title error",
+          detail: "You need to log in X",
+        });
+        return;
+      }
+await delay(random(1000, 3000));
     const durationInMilliseconds = durationInMinutes * 60 * 1000;
     const shareAverageTime =
       durationInMilliseconds / (numberFinish - numberStart);
@@ -107,24 +121,7 @@ async function featureShareX(
   }
 }
 try {
-await page.goto("https://twitter.com/home", {
-        timeout: 60000,
-        waitUntil: "networkidle2",
-      });
-      await delay(random(1000, 3000));
-const currentUrl = await page.url();
-      if (!currentUrl.includes("twitter.com/home")) {
-        logErrors.push({
-          error: "title error",
-          detail: "You need to log in X",
-        });
-        await delay(random(1000, 3000));
-        await browser.close();
-        return logErrors;
-      }
-await delay(random(1000,3000));
-await featureShareX(page, 5, 0, 3);
-    
+await featureShareX(page, 5, 0, 3);   
 } catch (error) {
     logErrors.push({
         error: "title error",
