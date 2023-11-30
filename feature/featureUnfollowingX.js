@@ -148,4 +148,3 @@ async function featureUnfollowingX(page, logErrors) {
 }
 
 export default featureUnfollowingX;
-``;
