@@ -15,7 +15,7 @@ async function featureSavePostsX(
         timeout: 60000,
         waitUntil: "networkidle2",
       });
-await delay(random(1000, 3000));
+await delay(random(2000, 5000));
 const currentUrl = await page.url();
       if (!currentUrl.includes("twitter.com/home")) {
         logErrors.push({
@@ -24,7 +24,7 @@ const currentUrl = await page.url();
         });
         return;
       }
-await delay(random(1000, 3000));
+await delay(random(2000, 5000));
     const durationInMilliseconds = durationInMinutes * 60 * 1000;
     const saveAverageTime =
       durationInMilliseconds / (numberFinish - numberStart);
@@ -34,12 +34,12 @@ await delay(random(1000, 3000));
     while (currentTime - startTime < durationInMilliseconds) {
       while (currentTime - startTime < (5 / 100) * durationInMilliseconds) {
         await page.mouse.wheel({ deltaY: random(500, 700) });
-        await delay(random(1000, 3000));
+        await delay(random(2000, 5000));
         currentTime = new Date().getTime();
       }
       while (numberStart < numberFinish) {
         const buttonSave = await page.$$('div[data-testid="bookmark"]');
-        await delay(random(1000, 3000));
+        await delay(random(2000, 5000));
         if (buttonSave.length === 0) {
           logErrors.push({
             error: "title error",
@@ -50,7 +50,7 @@ await delay(random(1000, 3000));
 
         const index = random(0, buttonSave.length - 1);
         const positionSave = await buttonSave[index].boundingBox();
-        await delay(random(1000, 3000));
+        await delay(random(2000, 5000));
         if (!positionSave) {
           logErrors.push({
             error: "title error",
@@ -62,13 +62,14 @@ await delay(random(1000, 3000));
         let totalHeight = 0;
         while (totalHeight < positionSave.y) {
           await page.mouse.wheel({ deltaY: random(500, 700) });
-          await delay(random(1000, 3000));
+          await delay(random(2000, 5000));
           totalHeight += random(500, 700);
         }
 
         if (buttonSave[index]) {
+          await delay(random(4000, 7000));
           await buttonSave[index].click();
-          await delay(random(1000, 3000));
+          await delay(random(2000, 5000));
         } else {
           logErrors.push({
             error: "title error",
@@ -85,15 +86,15 @@ await delay(random(1000, 3000));
         );
         while (scrollTime - saveCurrentTime < waitSaveTime) {
           await page.mouse.wheel({ deltaY: random(500, 700) });
-          await delay(random(1000, 3000));
+          await delay(random(2000, 5000));
           scrollTime = new Date().getTime();
         }
-        await delay(random(1000, 3000));
+        await delay(random(2000, 5000));
 
         numberStart++;
       }
       await page.mouse.wheel({ deltaY: random(500, 700) });
-      await delay(random(1000, 3000));
+      await delay(random(2000, 5000));
       currentTime = new Date().getTime();
     }
   } catch (error) {

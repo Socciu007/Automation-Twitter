@@ -10,7 +10,7 @@ async function featureAutoScrollX(page, scrollTime) {
         timeout: 60000,
         waitUntil: "networkidle2",
       });
-await delay(random(1000, 3000));
+await delay(random(2000, 5000));
 const currentUrl = await page.url();
       if (!currentUrl.includes("twitter.com/home")) {
         logErrors.push({
@@ -24,7 +24,7 @@ const currentUrl = await page.url();
     let currentTime = new Date().getTime();
     while (currentTime - startTime < scrollTimeInMilliseconds) {
       await page.mouse.wheel({ deltaY: random(500, 1000) });
-      await delay(random(1000, 3000));
+      await delay(random(2000, 5000));
       currentTime = new Date().getTime();
     }
   } catch (error) {

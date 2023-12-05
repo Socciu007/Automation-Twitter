@@ -10,7 +10,7 @@ async function featurePostStatusX(page, scrollTime, body = {}) {
         timeout: 60000,
         waitUntil: "networkidle2",
       });
-await delay(random(1000, 3000));
+await delay(random(2000, 5000));
 const currentUrl = await page.url();
       if (!currentUrl.includes("twitter.com/home")) {
         logErrors.push({
@@ -19,16 +19,16 @@ const currentUrl = await page.url();
         });
         return;
       }
-await delay(random(1000, 3000));
+await delay(random(2000, 5000));
     const scrollTimeInMilliseconds = scrollTime * 60 * 1000;
     const startTime = new Date().getTime();
     let currentTime = new Date().getTime();
     while (currentTime - startTime < scrollTimeInMilliseconds) {
       await page.mouse.wheel({ deltaY: random(500, 1000) });
-      await delay(random(1000, 3000));
+      await delay(random(2000, 5000));
       currentTime = new Date().getTime();
     }
-    await delay(random(1000, 3000));
+    await delay(random(2000, 5000));
     const data = [
       "Hôm nay that la zuiii",
       "Thật là tuyệt vời",
@@ -40,19 +40,19 @@ await delay(random(1000, 3000));
     );
     if (elementPost) {
       await elementPost.click();
-      await delay(random(1000, 3000));
+      await delay(random(2000, 5000));
       await page.type(
         'div[data-contents="true"] > div[data-block="true"]',
         data[Math.floor(Math.random() * data.length)]
       );
-      await delay(random(1000, 3000));
+      await delay(random(2000, 5000));
     } else {
       try {
         await page.type(
           'div[data-testid="tweetTextarea_0"]',
           data[Math.floor(Math.random() * data.length)]
         );
-        await delay(random(1000, 3000));
+        await delay(random(2000, 5000));
       } catch (error) {
         logErrors.push({
           error: "title error",
@@ -73,7 +73,7 @@ await delay(random(1000, 3000));
           return;
         }
         await clickStatus.click();
-        await delay(random(1000, 3000));
+        await delay(random(2000, 5000));
         const selectStatus = await page.$$('div[role="menuitem"]'); //4 option: [ everyone, accounts you follow, verified accounts, only accounts you mention]
         if (!selectStatus) {
           logErrors.push({
@@ -83,7 +83,7 @@ await delay(random(1000, 3000));
           return;
         }
         await selectStatus[0].click();
-        await delay(random(1000, 3000));
+        await delay(random(2000, 5000));
       } catch (error) {
         logErrors.push({
           error: "title error",
@@ -103,7 +103,7 @@ await delay(random(1000, 3000));
           return;
         }
         await buttonGif.click();
-        await delay(random(1000, 3000));
+        await delay(random(2000, 5000));
 
         const selectGif = await page.$$('div > img[draggable="false"]');
         if (!selectGif) {
@@ -115,17 +115,17 @@ await delay(random(1000, 3000));
         }
         const selectedGif = selectGif.slice(0, 8);
         const indexRandom_0 = Math.floor(Math.random() * 8);
-        await delay(random(1000, 3000));
+        await delay(random(2000, 5000));
         await selectedGif[indexRandom_0].click();
-        await delay(random(1000, 3000));
+        await delay(random(2000, 5000));
 
         const clickGif = await page.$$(
           'div[data-testid="gifSearchGifImage"] > img[draggable="false"]'
         );
         const indexRandom_1 = Math.floor(Math.random() * 10);
-        await delay(random(1000, 3000));
+        await delay(random(2000, 5000));
         await clickGif[indexRandom_1].click();
-        await delay(random(1000, 3000));
+        await delay(random(2000, 5000));
       } catch (error) {
         logErrors.push({
           error: "title error",
@@ -139,13 +139,13 @@ await delay(random(1000, 3000));
       try {
         const clickEmoji = await page.$(emoji);
         await clickEmoji.click();
-        await delay(random(1000, 3000));
+        await delay(random(2000, 5000));
 
         const selectEmoji = await page.$$('div[aria-selected="false"]');
         const indexRandom = Math.floor(Math.random() * 50);
-        await delay(random(1000, 3000));
+        await delay(random(2000, 5000));
         await selectEmoji[indexRandom].click();
-        await delay(random(1000, 3000));
+        await delay(random(2000, 5000));
         console.log("Chon emoji thanh cong");
       } catch (error) {
         console.log("Khong the chon emoji");
@@ -162,18 +162,18 @@ await delay(random(1000, 3000));
           return;
         }
         await clickPoll.click();
-        await delay(random(1000, 3000));
+        await delay(random(2000, 5000));
         try {
           await page.type(
             "input[name=Choice1]",
             data[Math.floor(Math.random() * data.length)]
           );
-          await delay(random(1000, 3000));
+          await delay(random(2000, 5000));
           await page.type(
             "input[name=Choice2]",
             data[Math.floor(Math.random() * data.length)]
           );
-          await delay(random(1000, 3000));
+          await delay(random(2000, 5000));
         } catch (error) {
           logErrors.push({
             error: "title error",
@@ -189,16 +189,16 @@ await delay(random(1000, 3000));
         return;
       }
     }
-    await delay(random(1000, 3000));
+    await delay(random(2000, 5000));
     const clickPost_0 = await page.$('div[data-testid="tweetButtonInline"]');
     const clickPost_1 = await page.$('div[data-testid="tweetButton"]');
     if (clickPost_0 || clickPost_1) {
       try {
-        await delay(random(1000, 3000));
+        await delay(random(2000, 5000));
         await clickPost_1.click();
-        await delay(random(1000, 3000));
+        await delay(random(2000, 5000));
         await clickPost_0.click();
-        await delay(random(1000, 3000));
+        await delay(random(2000, 5000));
       } catch (error) {
         logErrors.push({
           error: "title error",

@@ -15,19 +15,19 @@ async function featureCommentX(
         timeout: 60000,
         waitUntil: "networkidle2",
       });
-await delay(random(1000, 3000));
+await delay(random(2000, 5000));
 const currentUrl = await page.url();
       if (!currentUrl.includes("twitter.com/home")) {
         logErrors.push({
           error: "title error",
           detail: "You need to log in X",
         });
-        await delay(random(1000, 3000));
+        await delay(random(2000, 5000));
         return;
       }
-await delay(random(1000, 3000));
+await delay(random(2000, 5000));
     await page.mouse.wheel({ deltaY: random(500, 700) });
-    await delay(random(1000, 3000));
+    await delay(random(2000, 5000));
     const durationInMilliseconds = durationInMinutes * 60 * 1000;
     const commentAverageTime =
       durationInMilliseconds / (numberFinish - numberStart);
@@ -37,12 +37,12 @@ await delay(random(1000, 3000));
       let breakTime = (5 / 100) * durationInMilliseconds;
       while (currentTime - startTime < breakTime) {
         await page.mouse.wheel({ deltaY: random(500, 700) });
-        await delay(random(1000, 3000));
+        await delay(random(2000, 5000));
         currentTime = new Date().getTime();
       }
       while (numberStart < numberFinish) {
         const commentElements = await page.$$('div[data-testid="reply"]');
-        await delay(random(1000, 3000));
+        await delay(random(2000, 5000));
         if (commentElements.length === 0) {
           logErrors.push({
             error: "title error",
@@ -75,19 +75,19 @@ await delay(random(1000, 3000));
         let totalHeight = 0;
         while (totalHeight < positionComment.y) {
           await page.mouse.wheel({ deltaY: random(500, 700) });
-          await delay(random(1000, 3000));
+          await delay(random(2000, 5000));
           totalHeight += random(500, 700);
         }
 
         try {
           await commentElements[indexRandom].click();
-          await delay(random(1000, 3000));
+          await delay(random(2000, 5000));
 
           await page.type('div[data-contents="true"]', replyRandom.comment);
-          await delay(random(1000, 3000));
+          await delay(random(2000, 5000));
 
           await page.click('div[data-testid="tweetButton"]');
-          await delay(random(1000, 3000));
+          await delay(random(2000, 5000));
         } catch (error) {
           logErrors.push({
             error: "title error",
@@ -103,14 +103,14 @@ await delay(random(1000, 3000));
         );
         while (scrollTime - commentCurrentTime < waitTime) {
           await page.mouse.wheel({ deltaY: random(500, 700) });
-          await delay(random(1000, 3000));
+          await delay(random(2000, 5000));
           scrollTime = new Date().getTime();
         }
         numberStart++;
       }
 
       await page.mouse.wheel({ deltaY: random(500, 700) });
-      await delay(random(1000, 3000));
+      await delay(random(2000, 5000));
       currentTime = new Date().getTime();
     }
   } catch (error) {

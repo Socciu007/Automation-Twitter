@@ -15,7 +15,7 @@ async function featureShareX(
         timeout: 60000,
         waitUntil: "networkidle2",
       });
-await delay(random(1000, 3000));
+await delay(random(2000, 5000));
 const currentUrl = await page.url();
       if (!currentUrl.includes("twitter.com/home")) {
         logErrors.push({
@@ -24,7 +24,7 @@ const currentUrl = await page.url();
         });
         return;
       }
-await delay(random(1000, 3000));
+await delay(random(2000, 5000));
     const durationInMilliseconds = durationInMinutes * 60 * 1000;
     const shareAverageTime =
       durationInMilliseconds / (numberFinish - numberStart);
@@ -35,7 +35,7 @@ await delay(random(1000, 3000));
       let breakTime = (5 / 100) * durationInMilliseconds;
       while (currentTime - startTime < breakTime) {
         await page.mouse.wheel({ deltaY: random(500, 700) });
-        await delay(random(1000, 3000));
+        await delay(random(2000, 5000));
         currentTime = new Date().getTime();
       }
       while (numberStart < numberFinish) {
@@ -65,16 +65,16 @@ await delay(random(1000, 3000));
 
         try {
           await repostElements[indexRandom].click();
-          await delay(random(1000, 3000));
+          await delay(random(2000, 5000));
 
           await page.click('a[href="/compose/tweet"]');
-          await delay(random(1000, 3000));
+          await delay(random(2000, 5000));
 
           await page.type('div[data-contents="true"]', replyRandom.comment);
-          await delay(random(1000, 3000));
+          await delay(random(2000, 5000));
 
           await page.click('div[data-testid="tweetButton"]');
-          await delay(random(1000, 3000));
+          await delay(random(2000, 5000));
         } catch (error) {
           logErrors.push({
             error: "title error",
@@ -91,11 +91,11 @@ await delay(random(1000, 3000));
         );
         try {
           await page.mouse.wheel({ deltaY: random(500, 700) });
-          await delay(random(1000, 3000));
+          await delay(random(2000, 5000));
 
           while (scrollTime - shareCurrentTime < waitTime) {
             await page.mouse.wheel({ deltaY: random(500, 700) });
-            await delay(random(1000, 3000));
+            await delay(random(2000, 5000));
             scrollTime = new Date().getTime();
           }
         } catch (error) {
@@ -109,7 +109,7 @@ await delay(random(1000, 3000));
         numberStart++;
       }
       await page.mouse.wheel({ deltaY: random(500, 700) });
-      await delay(random(1000, 3000));
+      await delay(random(2000, 5000));
 
       currentTime = new Date().getTime();
     }

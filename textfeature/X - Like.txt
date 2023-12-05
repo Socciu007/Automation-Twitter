@@ -15,7 +15,7 @@ async function featureLikeX(
         timeout: 60000,
         waitUntil: "networkidle2",
       });
-await delay(random(1000, 3000));
+await delay(random(2000, 5000));
 const currentUrl = await page.url();
       if (!currentUrl.includes("twitter.com/home")) {
         logErrors.push({
@@ -24,7 +24,7 @@ const currentUrl = await page.url();
         });
         return;
       }
-await delay(random(1000, 3000));
+await delay(random(2000, 5000));
     const durationInMilliseconds = durationInMinutes * 60 * 1000;
     const startTime = new Date().getTime();
     const likeAverageTime =
@@ -34,12 +34,12 @@ await delay(random(1000, 3000));
       let likeStartTime = (5 / 100) * durationInMilliseconds;
       while (currentTime - startTime < likeStartTime) {
         await page.mouse.wheel({ deltaY: random(500, 700) });
-        await delay(random(1000, 3000));
+        await delay(random(2000, 5000));
         currentTime = new Date().getTime();
       }
       while (numberStart < numberFinish) {
         const likeElements = await page.$$('div[data-testid="like"]');
-        await delay(random(1000, 3000));
+        await delay(random(2000, 5000));
 
         if (likeElements.length === 0) {
           logErrors.push({
@@ -50,7 +50,7 @@ await delay(random(1000, 3000));
         }
         const indexRandom = Math.floor(Math.random() * likeElements.length);
         const positionLike = await likeElements[indexRandom].boundingBox();
-        await delay(random(1000, 3000));
+        await delay(random(2000, 5000));
         if (!positionLike) {
           logErrors.push({
             error: "title error",
@@ -61,13 +61,14 @@ await delay(random(1000, 3000));
         const scrollToLike = async (totalHeight) => {
           if (totalHeight < positionLike.y) {
             await page.mouse.wheel({ deltaY: random(500, 700) });
-            await delay(random(1000, 3000));
+            await delay(random(2000, 5000));
             return await scrollToLike(totalHeight + random(500, 700));
           }
 
           if (likeElements[indexRandom]) {
+            await delay(random(4000, 7000));
             await likeElements[indexRandom].click();
-            await delay(random(1000, 3000));
+            await delay(random(2000, 5000));
             return;
           } else {
             logErrors.push({
@@ -86,16 +87,16 @@ await delay(random(1000, 3000));
         );
         while (scrollTime - likeCurrentTime < waitTimeLike) {
           await page.mouse.wheel({ deltaY: random(500, 700) });
-          await delay(random(1000, 3000));
+          await delay(random(2000, 5000));
           scrollTime = new Date().getTime();
         }
-        await delay(random(1000, 3000));
+        await delay(random(2000, 5000));
 
         numberStart++;
       }
 
       await page.mouse.wheel({ deltaY: random(500, 700) });
-      await delay(random(1000, 3000));
+      await delay(random(2000, 5000));
 
       currentTime = new Date().getTime();
     }

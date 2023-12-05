@@ -10,8 +10,7 @@ import featureUnfollowingX from "./feature/featureUnfollowingX.js";
 // import featureCommentX from "./feature/featureCommentX.js";
 // import featureShareX from "./feature/featureShareX.js";
 let logErrors = [];
-const delay = (timeout) =>
-  new Promise((resolve) => setTimeout(resolve, timeout));
+const delay = timeout => new Promise(resolve => setTimeout(resolve, timeout));
 
 const hideMyAcc = new Hidemyacc();
 
@@ -27,7 +26,7 @@ async function runProfiles(profiles, numberProfile) {
   try {
     //Lay so luong tai khoan run
     const account = profiles.data.slice(0, numberProfile);
-    const results = await account.map(async (profile) => {
+    const results = await account.map(async profile => {
       const response = await hideMyAcc.start(profile.id, {
         startUrl: "about:blank",
       });
@@ -50,21 +49,6 @@ async function runProfiles(profiles, numberProfile) {
         page = await browser.newPage();
       }
 
-      await page.goto("https://twitter.com/home", {
-        timeout: 30000,
-        waitUntil: "networkidle2",
-      });
-
-      const currentUrl = await page.url();
-      if (!currentUrl.includes("twitter.com/home")) {
-        logErrors.push({
-          error: "title error",
-          detail: "You need to log in X",
-        });
-        await browser.close();
-        return logErrors;
-      }
-
       await delay(3000);
       // await featureAutoScroll(page, 1);
       // await featureSavePostsX(page, 4, 0, 3, logErrors);
@@ -82,7 +66,7 @@ async function runProfiles(profiles, numberProfile) {
       //   // schedule: 'div[aria-label="Schedule post"]'
       // });
       // await featureInboxX(page);
-      // await featureReadNotiX(page);
+      // await featureReadNotiX(page, logErrors);
       // return logErrors;
       // await browser.close();
       console.log(logErrors);
