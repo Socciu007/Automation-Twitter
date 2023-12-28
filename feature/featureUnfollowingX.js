@@ -26,7 +26,8 @@ async function featureUnfollowingX(page, logErrors) {
     const buttonProfile_1 = await page.$('a[aria-label="Profile"]');
     await delay(random(3000, 7000));
     if (buttonProfile_0) {
-      await buttonProfile_0.click();
+      await page.mouse('a[aria-label="Profile"]');
+      // await buttonProfile_0.click();
       await delay(random(2000, 5000));
     } else if (buttonProfile_1) {
       await buttonProfile_1.click();
